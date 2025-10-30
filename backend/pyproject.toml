@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = "Backend of App"
+authors = ["Daniel <daniel.gil.romero24@gmail.com>"]
+packages = [{ include = "app", from = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.13"  
+fastapi = {extras = ["standard"], version = "^0.120.2"}
+uvicorn = { version = "^0.38.0", extras = ["standard"] }
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
