@@ -44,6 +44,21 @@ export default function RootLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="newPage"
+        options={{
+          title: "NewPage",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={
+                focused ? "airplane" : "airplane-outline"
+              }
+              color={color}
+              size={24}
+            ></Ionicons>
+          ),
+        }}
+      />
     </Tabs>
   );
 }
