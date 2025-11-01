@@ -1,13 +1,13 @@
 import { Text, View, StyleSheet } from "react-native";
 import { Link } from "expo-router";
-// import { UseTheme } from "@/src/theme/ThemeProvider";
+import { UseTheme } from "@/src/theme/ThemeProvider";
 
 export default function Index() {
+  const t = UseTheme();
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Home screen</Text>
-      <Link href="/about" style={styles.button}>
-        {" "}
+    <View style={[styles.container, { backgroundColor: t.colors.bg }]}>
+      <Text style={[styles.title, { color: t.colors.text }]}>Home screen</Text>
+      <Link href="/about" style={[styles.button, { color: t.colors.accent }]}>
         Go to About Screen
       </Link>
     </View>
@@ -17,12 +17,13 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
     alignItems: "center",
     justifyContent: "center",
   },
-  text: {
-    color: "#fff",
+  title: {
+    fontSize: 24,
+    fontWeight: "700",
+    marginBottom: 16,
   },
   button: {
     fontSize: 20,
