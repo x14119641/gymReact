@@ -1,16 +1,21 @@
 import { Text, View, StyleSheet } from "react-native";
 import { Link } from "expo-router";
-import { UseTheme } from "@/src/theme/ThemeProvider";
+import { useTheme } from "@/src/theme/ThemeProvider";
+import { BaseLayout } from "@/src/components/BaseLayout";
 
 export default function Index() {
-  const t = UseTheme();
+  const t = useTheme();
   return (
-    <View style={[styles.container, { backgroundColor: t.colors.bg }]}>
-      <Text style={[styles.title, { color: t.colors.text }]}>Home screen</Text>
-      <Link href="/about" style={[styles.button, { color: t.colors.accent }]}>
-        Go to About Screen
-      </Link>
-    </View>
+    <BaseLayout>
+      <View style={styles.container}>
+        <Text style={[styles.title, { color: t.colors.text }]}>
+          Home screen
+        </Text>
+        <Link href="/about" style={[styles.button, { color: t.colors.accent }]}>
+          Go to About Screen
+        </Link>
+      </View>
+    </BaseLayout>
   );
 }
 

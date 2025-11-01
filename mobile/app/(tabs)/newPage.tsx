@@ -1,12 +1,13 @@
 // app/index.tsx (or any screen)
 import { View, Text, StyleSheet } from "react-native";
-import { UseTheme } from "@/src/theme/ThemeProvider";
+import { useTheme } from "@/src/theme/ThemeProvider";
+import { BaseLayout } from "@/src/components/BaseLayout";
 
 export default function Home() {
-  const t = UseTheme();
+  const t = useTheme();
 
   return (
-    <View style={[s.container, { backgroundColor: t.colors.bg }]}>
+    <BaseLayout>
       <Text style={[s.title, { color: t.colors.text }]}>
         Hello 👋 ({t.scheme} mode)
       </Text>
@@ -22,16 +23,17 @@ export default function Home() {
         ]}
       >
         <Text style={{ color: t.colors.subtext }}>Accent example:</Text>
-        <Text style={{ color: t.colors.accent, fontWeight: "700", fontSize: 20 }}>
+        <Text
+          style={{ color: t.colors.accent, fontWeight: "700", fontSize: 20 }}
+        >
           2.10 : 1
         </Text>
       </View>
-    </View>
+    </BaseLayout>
   );
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, padding: 16 },
   title: { fontSize: 22, fontWeight: "700", marginBottom: 12 },
   card: {
     borderWidth: 1,
