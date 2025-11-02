@@ -20,3 +20,4 @@ class LoginRequest(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str = "bearer"
+    refresh_token:str

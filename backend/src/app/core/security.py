@@ -34,6 +34,15 @@ def create_access_token(sub: str) -> str:
     )
 
 
+def create_refresh_token(sub: str) -> str:
+    now = int(time.time())
+    return jwt.encode(
+        {"sub": sub, "iat": now, "exp": now + 3600 * 27 * 7},
+        settings.JWT_SECRET,
+        algorithm=settings.JWT_ALG,
+    )
+
+
 async def get_current_user(token: HTTPAuthorizationCredentials = Depends(security)):
     try:
         payload = jwt.decode(
@@ -42,4 +51,4 @@ async def get_current_user(token: HTTPAuthorizationCredentials = Depends(securit
         user_id = int(payload["sub"])
         return user_id
     except JWTError:
-        HTTPException(status_code=401, detail="Invalid token or expired")
+        raise HTTPException(status_code=401, detail="Invalid token or expired")
