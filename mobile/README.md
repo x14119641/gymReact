@@ -3,3 +3,27 @@ npx expo start
 
 # Run and clean cache
 npm start -c
+
+
+# Add emulator tools in path
+echo $ANDROID_HOME
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+// source ~/.bashrc
+
+# Run with emulator
+```
+REACT_NATIVE_PACKAGER_HOSTNAME=localhost npx expo start
+
+// 2nd Option
+// Once per session
+adb reverse tcp:8081 tcp:8081
+adb reverse tcp:19000 tcp:19000
+adb reverse tcp:19001 tcp:19001
+// start metro
+npx expo start --localhost -c
+
+```
+
+# Check logs
+adb logcat *:S ReactNative:V ReactNativeJS:V

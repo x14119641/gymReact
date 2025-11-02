@@ -17,7 +17,7 @@ export function ThemeProvider({children}:{ children: React.ReactNode}) {
     // const scheme: "light" | "dark" = system === "dark" ? "dark" : "light";
     const scheme: "light" | "dark" = "light"; // Force light
     const value = useMemo<ThemeContextValue>(() => {
-        const colors = scheme === "dark" ? darkColors : lightColors;
+        const colors = scheme === "light" ?  lightColors: darkColors;
         return {
             scheme, colors, radius:12, space:8,
         };
