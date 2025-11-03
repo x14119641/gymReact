@@ -13,7 +13,8 @@ export default function RootLayout() {
         headerTintColor:'#fff',
         tabBarStyle: {
           backgroundColor: '#26597q'
-        }
+        },
+        headerShown:false
       }}
     >
       <Tabs.Screen

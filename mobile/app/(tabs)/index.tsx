@@ -3,6 +3,8 @@ import { Link } from "expo-router";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { BaseLayout } from "@/src/components/BaseLayout";
 import { useAuth } from "@/src/store/auth";
+import { Card } from "@/src/components/Card";
+import WeekDaysCard from "@/src/components/WeekDaysComponent";
 
 
 export default function Index() {
@@ -11,6 +13,14 @@ export default function Index() {
 
   return (
     <BaseLayout>
+      <View>
+        <Card>
+          <Text style={[styles.title, {color:t.colors.text}]}>Hello <Text style={{color:t.colors.accent}}>{user?.username}</Text></Text>
+          <Text style={[styles.subText, {color:t.colors.text}]}>Subtext</Text>
+          <Text style={[styles.subText, {color:t.colors.text}]}>More Text</Text>
+        </Card>
+      </View>
+      <WeekDaysCard />
       <View style={styles.container}>
         <Text style={[styles.title, { color: t.colors.text }]}>
           Home screen
@@ -31,15 +41,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: "700",
-    marginBottom: 16,
+    marginBottom: 4,
   },
   subText: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "700",
-    marginTop:8,
-    marginBottom: 16,
+    marginBottom: 2,
   },
   button: {
     fontSize: 20,
