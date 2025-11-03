@@ -6,7 +6,8 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     JWT_SECRET: str
     JWT_ALG: str
-    ACCESS_TTL_MIN: int = 15
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    ACCESS_TOKEN_EXPIRE_DAYS: int = 7
 
     @property
     def SYNC_DATABASE_URL(self) -> str:

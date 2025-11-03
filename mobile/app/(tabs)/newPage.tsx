@@ -1,11 +1,29 @@
 // app/index.tsx (or any screen)
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { BaseLayout } from "@/src/components/BaseLayout";
+import { useAuth } from "@/src/store/auth";
+import { api } from "@/src/services/api";
+
 
 export default function Home() {
   const t = useTheme();
 
+  const user = useAuth(s=>s.user);
+
+  const callPublic = async () => {
+    const res = await api.get("/users/unprotected");
+    console.log("[public] respone:", res.data)
+  }
+
+  const callProtected = async () => {
+    try {
+      const res = await api.get("/users/protected")
+      console.log("[protected] rspone:", res.data)      
+    } catch (error:any) {
+      console.log("[protected] error", error)
+    }
+  }
   return (
     <BaseLayout>
       <Text style={[s.title, { color: t.colors.text }]}>
@@ -28,6 +46,11 @@ export default function Home() {
         >
           2.10 : 1
         </Text>
+      </View>
+      <View style={{ flex:1, justifyContent: "center", padding:20}}>
+        <Text>User: {user?.username ?? "None"}</Text>
+        <Button color="#669874" title="Call public endpoint" onPress={callPublic} />
+        <Button title="Call proteted endpoint" onPress={callProtected} />
       </View>
     </BaseLayout>
   );

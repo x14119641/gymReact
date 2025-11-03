@@ -2,14 +2,13 @@ import { useState } from "react";
 import { View, TextInput, Button, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/src/theme/ThemeProvider";
-import { loadMe, login } from "@/src/services/auth";
 import { useAuth } from "@/src/store/auth";
 
 export default function Login() {
   console.log("LOGIN RENDER");
   const t = useTheme();
   const router = useRouter();
-  const { setTokens } = useAuth();
+  const doLogin = useAuth(s => s.doLogin);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -19,10 +18,7 @@ export default function Login() {
     setLoading(true);
     setErr(null);
     try {
-      const { access_token, refresh_token } = await login(email, password);
-      await setTokens(access_token, refresh_token);
-      // load user
-      await loadMe(access_token);
+      await doLogin(email, password);
       router.replace("/(tabs)");
     } catch (e: any) {
       console.log(e);

@@ -3,14 +3,12 @@ from jose import jwt, JWTError
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from .config import settings
-import time
+from datetime import datetime, timedelta, timezone
 
 
 ph = PasswordHasher()
 security = HTTPBearer()
 
-
-ACCESS_TTL = settings.ACCESS_TTL_MIN * 60
 
 
 def hash_password(plain: str) -> str:
@@ -26,18 +24,20 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 
 def create_access_token(sub: str) -> str:
-    now = int(time.time())
+    now = datetime.now(timezone.utc)
+    exp = now + timedelta(minutes=2)
     return jwt.encode(
-        {"sub": sub, "iat": now, "exp": now + 1},
+        {"sub": sub, "iat":int(now.timestamp()), "iat":int(now.timestamp()) -5,"exp": int(exp.timestamp())},
         settings.JWT_SECRET,
         algorithm=settings.JWT_ALG,
     )
 
 
 def create_refresh_token(sub: str) -> str:
-    now = int(time.time())
+    now = datetime.now(timezone.utc)
+    exp = now + timedelta(days=settings.ACCESS_TOKEN_EXPIRE_DAYS)
     return jwt.encode(
-        {"sub": sub, "iat": now, "exp": now + 3600 * 27 * 7},
+        {"sub": sub, "iat":int(now.timestamp()), "iat":int(now.timestamp()) -5,"exp": int(exp.timestamp())},
         settings.JWT_SECRET,
         algorithm=settings.JWT_ALG,
     )
@@ -46,7 +46,7 @@ def create_refresh_token(sub: str) -> str:
 async def get_current_user(token: HTTPAuthorizationCredentials = Depends(security)):
     try:
         payload = jwt.decode(
-            token.credentials, settings.JWT_SECRET, algorithms=[settings.JWT_ALG]
+            token.credentials, settings.JWT_SECRET, algorithms=[settings.JWT_ALG],
         )
         user_id = int(payload["sub"])
         return user_id

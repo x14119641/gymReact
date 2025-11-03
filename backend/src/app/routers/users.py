@@ -15,3 +15,16 @@ async def read_current_user(
 ):
     user = await db.scalar(select(User).where(User.id == user_id))
     return {"id": user_id, "email": user.email, "username": user.username}
+
+
+@router.get("/protected")
+async def protected(
+    user_id: int = Depends(get_current_user)
+):
+    return {"message": "This is a protected page"}
+
+
+@router.get("/unprotected")
+async def unprotected(
+):
+    return {"message": "Unprocteted"}
