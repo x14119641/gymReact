@@ -13,22 +13,27 @@ const secureStorage = {
 };
 
 type AuthState = {
-  token: string | null;
-  setToken: (t: string | null) => Promise<void>;
+  accessToken: string | null;
+  refreshToken: string | null;
+  setTokens: (access: string, refresh:string) => Promise<void>;
+  setAccessToken:(token:string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
 export const useAuth = create<AuthState>()(
   persist(
     (set) => ({
-      token: null,
-      hydrated: false,
+      accessToken: null,
+      refreshToken: null,
 
-      setToken: async (t) => {
-        set({ token: t });
+      setTokens: async (access, refresh) => {
+        set({ accessToken: access, refreshToken:refresh });
+      },
+      setAccessToken: async (token) => {
+        set({accessToken:token});
       },
       logout: async () => {
-        set({ token: null });
+        set({ accessToken: null, refreshToken:null });
       },
     }),
     {

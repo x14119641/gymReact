@@ -9,7 +9,7 @@ export default function Login() {
   console.log("LOGIN RENDER");
   const t = useTheme();
   const router = useRouter();
-  const { setToken } = useAuth();
+  const { setTokens } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -19,8 +19,8 @@ export default function Login() {
     setLoading(true);
     setErr(null);
     try {
-      const { access_token } = await login(email, password);
-      await setToken(access_token);
+      const { access_token, refresh_token } = await login(email, password);
+      await setTokens(access_token, refresh_token);
       router.replace("/(tabs)");
     } catch (e: any) {
       console.log(e);

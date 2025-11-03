@@ -28,7 +28,7 @@ def verify_password(plain: str, hashed: str) -> bool:
 def create_access_token(sub: str) -> str:
     now = int(time.time())
     return jwt.encode(
-        {"sub": sub, "iat": now, "exp": now + ACCESS_TTL},
+        {"sub": sub, "iat": now, "exp": now + 1},
         settings.JWT_SECRET,
         algorithm=settings.JWT_ALG,
     )
