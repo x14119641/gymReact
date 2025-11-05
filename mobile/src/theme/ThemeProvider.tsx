@@ -14,8 +14,9 @@ const ThemeCtx = createContext<ThemeContextValue | null>(null);
 export function ThemeProvider({children}:{ children: React.ReactNode}) {
     // follows OS: "light" | "dark" | null
     const system = useColorScheme();
-    // const scheme: "light" | "dark" = system === "dark" ? "dark" : "light";
-    const scheme: "light" | "dark" = "light"; // Force light
+    console.log("CONSOLE", system)
+    const scheme: "light" | "dark" = system === "dark" ? "dark" : "light";
+    // const scheme: "light" | "dark" = "light"; // Force light
     const value = useMemo<ThemeContextValue>(() => {
         const colors = scheme === "light" ?  lightColors: darkColors;
         return {

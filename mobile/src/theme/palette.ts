@@ -36,4 +36,35 @@ export const palette = {
   success: "#22C55E",
   warning: "#FACC15",
   error:   "#EF4444",
+
+  // Glassy card 
+  // -- Light
+  lightBg : "#F1F8FF",
+  lightCard: "#60A5FA",
+  lightText: "#484a4c",
+  lightSubtext: "#787c7f",
+  lightBorder: "#60A5FA",
+  lightAccent: "#1E3A8A",   // orange highlight
+  lightSuccess: "#22C55E",
+  lightWarning: "#FACC15",
+  lightError: "#EF4444",
+  lightLink: "#2563EB",
+  lightOverlay: "rgba(0,0,0,0.1)",
+  lightModal: "#DBEAFE",
+  lightShadow: "rgba(0,0,0,0.15)",
+
 };
+
+// lightBg : "#F1F8FF",
+//   lightCard: "2563EB",
+//   lightText: "#102A43",
+//   lightSubtext: "#486581",
+//   lightBorder: "rgba(0, 100, 160, 0.25)",
+//   lightAccent: "#0077B6",   // orange highlight
+//   lightSuccess: "#2A9D8F",
+//   lightWarning: "#F4A261",
+//   lightError: "#E63946",
+//   lightLink: "#2563EB",
+//   lightOverlay: "rgba(0,0,0,0.1)",
+//   lightModal: "#DBEAFE",
+//   lightShadow: "rgba(0,0,0,0.15)",

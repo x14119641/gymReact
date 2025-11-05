@@ -6,6 +6,7 @@ export type ThemeColors = {
   card: string;
   text: string;
   subtext: string;
+  title: string;
   border: string;
   accent: string;
   success: string;
@@ -15,36 +16,79 @@ export type ThemeColors = {
   overlay: string;
   modal: string;
   shadow: string;
+  console: {
+    bg: string;
+    border: string;
+    chipBg: string;
+    chipBorder: string;
+    prompt: string; // "$ status"
+    value: string;  // info values
+    note: string;   // notices
+  };
 };
 
 export const lightColors: ThemeColors = {
-  bg: palette.ethereal100,
-  card: palette.white,
-  text: palette.neutral900,
-  subtext: palette.neutral700,
-  border: palette.ethereal200,
-  accent: palette.primary400,   // orange highlight
-  success: palette.success,
-  warning: palette.warning,
-  error: palette.error,
-  link: palette.secondary400,
-  overlay: "rgba(0,0,0,0.1)",
-  modal: palette.white,
-  shadow: "rgba(0,0,0,0.15)",
+  // Base
+  bg: "#F1F8FF",           // soft sky-white
+  card: "#FFFFFF",         // solid white card (use for non-glass cards)
+  text: "#102A43",         // deep slate blue (great daytime readability)
+  subtext: "#486581",      // steel gray-blue
+  title: "#102A43", 
+  border: "rgba(0, 120, 160, 0.22)",
+
+  // Accents
+  accent: "#0077B6",       // vivid cool blue (headings/labels)
+  success: "#2A9D8F",      // turquoise-green
+  warning: "#F4A261",      // muted amber (readable on light)
+  error: "#E63946",        // clear red
+  link: "#2563EB",
+
+  // Effects
+  overlay: "rgba(0,0,0,0.06)",
+  modal: "#EAF2FB",
+  shadow: "rgba(0,0,0,0.25)",
+
+  // Console surface (light)
+  console: {
+    bg: "rgba(0, 40, 60, 0.06)",         // cool translucent pane over #F1F8FF
+    border: "rgba(0, 120, 160, 0.22)",   // thin cyan/steel edge
+    chipBg: "rgba(0, 119, 182, 0.12)",   // for the "$ status" pill
+    chipBorder: "rgba(0, 119, 182, 0.35)",
+    prompt: "#0077B6",                   // headings / prompts
+    value: "#00A896",                    // info values
+    note: "#F4A261",                     // notices / hints
+  },
 };
 
 export const darkColors: ThemeColors = {
-  bg: "#181818",
-  card: "#1F1F1F",
-  text: "#F7F7F7",
-  subtext: "#CFCFCF",
-  border: "#2A2A2A",
-  accent: palette.primary600,   // deeper orange for dark
-  success: palette.success,
-  warning: palette.warning,
-  error: palette.error,
-  link: "#8C9EFF",
-  overlay: "rgba(0,0,0,0.6)",
-  modal: "#1F1F1F",
-  shadow: "rgba(0,0,0,0.85)",
+  // Base
+  bg: "#0B1E2D",           // deep blue-black
+  card: "#101820",         // solid dark card
+  text: "#CFE9F5",         // misty cyan-white
+  subtext: "rgba(207, 233, 245, 0.75)",
+  title: "#102A43", 
+  border: "rgba(0, 180, 150, 0.28)",
+
+  // Accents
+  accent: "#7FDBFF",       // soft cyan pop
+  success: "#2ECF9A",
+  warning: "#FFD084",
+  error: "#FF6B6B",
+  link: "#7AB6FF",
+
+  // Effects
+  overlay: "rgba(255,255,255,0.06)",
+  modal: "rgba(255,255,255,0.04)",
+  shadow: "rgba(0,0,0,0.6)",
+
+  // Console surface (dark)
+  console: {
+    bg: "rgba(8, 12, 20, 0.55)",         // smoky glass
+    border: "rgba(0, 180, 150, 0.28)",
+    chipBg: "rgba(0, 231, 179, 0.10)",
+    chipBorder: "rgba(0, 231, 179, 0.35)",
+    prompt: "#7FFF7F",
+    value: "#00BFFF",
+    note: "#FFD084",
+  },
 };

@@ -27,3 +27,11 @@ npx expo start --localhost -c
 
 # Check logs
 adb logcat *:S ReactNative:V ReactNativeJS:V
+
+# Add dark mode
+adb shell "cmd uimode night yes"
+# Light mode
+adb shell "cmd uimode night no"
+
+# Clear cache from adb
+adb shell pm clear host.exp.exponent
