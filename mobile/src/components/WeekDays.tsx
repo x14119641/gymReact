@@ -16,6 +16,8 @@ import {
   addDays,
   isSameDay,
 } from "date-fns";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Container } from "./Container";
 
 function buildWeek(baseDate: Date) {
   const weekStart = startOfWeek(baseDate, { weekStartsOn: 1 }); // Monday
@@ -29,7 +31,7 @@ export default function WeekCard() {
   const listRef = React.useRef<FlatList<Date[]> | null>(null);
 
   // constants
-  const PAD = 12;
+  const PAD = 0;
   const GAP = 4;
   const COLS = 7;
 
@@ -158,7 +160,8 @@ export default function WeekCard() {
   );
 
   return (
-    <View style={styles.box} onLayout={onLayoutBox}>
+    <Container variant="console">
+      <View style={{ width: "100%" }}  onLayout={onLayoutBox}>
       {!pageW ? (
         <Text style={styles.title}>Loading…</Text>
       ) : (
@@ -187,7 +190,12 @@ export default function WeekCard() {
             onMomentumScrollEnd={handlePageChange}
             removeClippedSubviews={false}
           />
-
+          <View style={{height:1, backgroundColor:"#336543", marginVertical:12}}/>
+          <Pressable onPress={() => console.log("ADD it!")}>
+            {/* <Ionicons name={"add"} size={20} color={"#697657"} style={styles.icon} /> */}
+            <Text style={{color:"#236548", paddingHorizontal: 12, textDecorationLine:"underline"}}>Add Workout</Text>
+          </Pressable>
+          
           {/* Print your "X" variable (the selected full date) */}
           <Text style={styles.selectedLabel}>
             Selected: {format(selectedDate, "yyyy-MM-dd")}
@@ -195,6 +203,8 @@ export default function WeekCard() {
         </>
       )}
     </View>
+    </Container>
+    
   );
 }
 
@@ -228,4 +238,9 @@ const styles = StyleSheet.create({
     color: "#9ee7ff",
     fontWeight: "600",
   },
+  icon: {
+    position:"absolute",
+    left:20,
+    fontSize:24
+  }
 });
