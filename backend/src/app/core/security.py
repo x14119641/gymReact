@@ -25,7 +25,7 @@ def verify_password(plain: str, hashed: str) -> bool:
 
 def create_access_token(sub: str) -> str:
     now = datetime.now(timezone.utc)
-    exp = now + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    exp = now + timedelta(seconds=settings.ACCESS_TOKEN_EXPIRE_SECONDS)
     return jwt.encode(
         {"sub": sub, "iat":int(now.timestamp()), "iat":int(now.timestamp()) -5,"exp": int(exp.timestamp())},
         settings.JWT_SECRET,
@@ -35,7 +35,7 @@ def create_access_token(sub: str) -> str:
 
 def create_refresh_token(sub: str) -> str:
     now = datetime.now(timezone.utc)
-    exp = now + timedelta(days=settings.ACCESS_TOKEN_EXPIRE_DAYS)
+    exp = now + timedelta(seconds=settings.REFRESH_TOKEN_EXPIRE_SECONDS)
     # exp = now + timedelta(minutes=2)
     return jwt.encode(
         {"sub": sub, "iat":int(now.timestamp()), "iat":int(now.timestamp()) -5,"exp": int(exp.timestamp())},

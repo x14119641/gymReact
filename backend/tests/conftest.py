@@ -27,10 +27,11 @@ assert "***" not in os.environ["DATABASE_URL"], f"DATABASE_URL is masked: {os.en
 base = os.environ["DATABASE_URL"]
 u = make_url(base).set(database="db_test")
 os.environ["DATABASE_URL"] = u.render_as_string(hide_password=False)
+
+# Set refresh tokens seconds less time
+os.environ["ACCESS_TOKEN_EXPIRE_SECONDS"] = "1"
+os.environ["REFRESH_TOKEN_EXPIRE_SECONDS"] = "3"
     
-
-
-
 
 def _sync_url_for_psycopg()-> str:
     """psycopg wants postgresql:// (no driver)"""    
