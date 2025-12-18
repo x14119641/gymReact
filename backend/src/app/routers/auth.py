@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Body
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, or_
 from ..core.config import settings
 from ..core.database import get_db
 from ..core.security import create_refresh_token, hash_password, verify_password, create_access_token
@@ -50,7 +50,7 @@ async def refresh_token(data = Body (...)):
 
 @router.post("/login")
 async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
-    q = select(User).where(User.email == body.email)
+    q = select(User).where(or_(User.username == body.identifier,User.email == body.identifier))
     u = (await db.execute(q)).scalar_one_or_none()
     if not u or not verify_password(body.password, u.password_hash):
         raise HTTPException(401, "Invalid Credentials")

@@ -14,10 +14,10 @@ class RegisterRequest(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
+    identifier: str # username or email
     password: str
 
 
 class TokenResponse(BaseModel):
-    access_token: str = "bearer"
-    refresh_token:str
+    access_token: str 
+    refresh_token: str
