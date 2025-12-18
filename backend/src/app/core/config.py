@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from sqlalchemy.engine.url import make_url
+from pydantic import ConfigDict
 
 
 class Settings(BaseSettings):
@@ -15,8 +16,7 @@ class Settings(BaseSettings):
         url = url.set(drivername="postgresql+psycopg")
         return str(url)
 
-    class Config:
-        env_file = ".env"
+    model_config = ConfigDict(env_file=".env", extra="forbid")
 
 
 settings = Settings()
