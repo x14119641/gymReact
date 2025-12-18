@@ -23,7 +23,7 @@ type AuthState = {
   user: User | null;
 
   setTokens: (access: string, refresh:string) => Promise<void>;
-  setAccessToken:(token:string) => Promise<void>;
+  setAccessToken:(token:string |null) => Promise<void>;
   
   doLogin: (email:string, password:string) => Promise<void>;
   loadMe:() => Promise<void>;
@@ -32,47 +32,67 @@ type AuthState = {
 
 export const useAuth = create<AuthState>()(
   persist(
-    (set, get) => ({
-      accessToken: null,
-      refreshToken: null,
-      user:null,
+    (set, get) => {
+      // register callbacks once when store is created
+      authBridge.setOnLogout(() => get().logout());
+      authBridge.setOnAccessToken((t) => get().setAccessToken(t)); 
 
-      setTokens: async (access, refresh) => {
-        authBridge.setAccessToken(access);
-        authBridge.setRefreshToken(refresh);
-        set({ accessToken: access, refreshToken:refresh });
-      },
-      setAccessToken: async (token) => {
-        authBridge.setAccessToken(token)
-        set({accessToken:token});
-      },
-      loadMe: async () => {
-        const token = get().accessToken;
-        if (!token) { set({ user:null }); return;}
-        try {
-          const res = await loadMeApi();
-          set({ user: res.data });
-        } catch (error:any) {
-          console.log("Error in auth:", error);
-          set({user:null, accessToken:null, refreshToken: null});
-        }
-        
-      },
-      doLogin: async (username, password) => {
-        const res = await loginApi(username, password);
-        await get().setTokens(res.data.access_token, res.data.refresh_token);
-        await get().loadMe();
-      },
-      logout: async () => {
-        try { await logoutApi(); } catch  {}
-        authBridge.setAccessToken(null);
-        authBridge.setRefreshToken(null);
-        set({ user: null, accessToken: null, refreshToken:null });
-      },
-    }),
+      return {
+        accessToken: null,
+        refreshToken: null,
+        user: null,
+
+        setTokens: async (access, refresh) => {
+          authBridge.setAccessToken(access);
+          authBridge.setRefreshToken(refresh);
+          set({ accessToken: access, refreshToken: refresh });
+        },
+
+        // 🔧 change this to accept null too
+        setAccessToken: async (token) => {
+          authBridge.setAccessToken(token);
+          set({ accessToken: token });
+        },
+
+        loadMe: async () => {
+          const token = get().accessToken;
+          if (!token) { set({ user: null }); return; }
+          try {
+            const res = await loadMeApi();
+            set({ user: res.data });
+          } catch (error: any) {
+            console.log("Error in loadME: ", error)
+            set({ user: null, accessToken: null, refreshToken: null });
+          }
+        },
+
+        doLogin: async (email, password) => {
+          const res = await loginApi(email, password);
+          await get().setTokens(res.data.access_token, res.data.refresh_token);
+          await get().loadMe();
+        },
+
+        logout: async () => {
+          try { await logoutApi(); } catch {}
+          authBridge.setAccessToken(null);
+          authBridge.setRefreshToken(null);
+          set({ user: null, accessToken: null, refreshToken: null });
+          console.log("[store] logout called");
+        },
+      };
+    },
     {
       name: "auth-secure",
       storage: createJSONStorage(() => secureStorage),
+
+      // ✅ you already added this — keep it
+      onRehydrateStorage: () => (state) => {
+        if (!state) return;
+        authBridge.setAccessToken(state.accessToken);
+        authBridge.setRefreshToken(state.refreshToken);
+      },
     }
   )
 );
+
+

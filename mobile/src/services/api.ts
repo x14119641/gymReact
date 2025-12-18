@@ -41,12 +41,19 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const original = error.config as AxiosRequestConfig & { _retry?: boolean };
     const status = error.response?.status;
+    console.log("[api] interceptor caught an error:", {
+      url:original?.url,
+      status,
+      retry: original?._retry,
+      isRefreshing,
+    });
 
     // Handdle  errors once per request
-    if (status !== 401 || original._retry) throw error;
+    if ((status !== 401 && status !== 403 ) || original._retry) throw error;
 
     // Avoid refreshing if the refresh call itself failed
     if (original.url?.includes("/auth/refresh")) {
+      console.log("[api] on /aut/refresh -> logout");
       await authBridge.callLogout();
       throw error;
     }
@@ -54,45 +61,48 @@ api.interceptors.response.use(
     original._retry = true;
 
     const doRefresh = async () => {
-      const refreshToken = await authBridge.getRefreshToken();
+      const refreshToken = authBridge.getRefreshToken();
+      console.log("[api] doRefresh: have refresh token?", !!refreshToken);
       if (!refreshToken) {
+        console.log("[api] doRefresh: missing refresh token -> logout");
         await authBridge.callLogout();
         throw error;
       }
 
-      try {
-        const r = await axios.post(`${DEFAULT_BASE_URL}/auth/refresh`, {
+      console.log("[api] calling auth/refresh");
+      const r = await axios.post(`${DEFAULT_BASE_URL}/auth/refresh`, {
           refresh_token: refreshToken,
         });
         const newToken = (r.data as any).access_token;
-        authBridge.setAccessToken(newToken);
+        console.log("[api] refresh OK, new acces token:", newToken.slice(0,12));
+        await authBridge.callSetAccessToken(newToken);
         return newToken;
-      } catch (error) {
-        await authBridge.callLogout();
-        throw error;
-      }
-    };
+      };
 
     try {
-      if (!isRefreshing) {
+      if (isRefreshing) {
+        console.log("[api] refresh already in progress -> waiting");
+        const newToken = await new Promise<string>((resolve) =>
+          subscribe(resolve)
+        );
+        console.log("[api] got token from queue -> retrying original");
+        original.headers = original.headers ?? {};
+        (original.headers as any).Authorization = `Bearer ${newToken}`;
+        console.log("Refreshed")
+        return api(original);
+        }
+
+        
         isRefreshing = true;
         const newToken = await doRefresh();
         isRefreshing = false;
         publish(newToken);
-        console.log("[services/api] doRefresh", "refreshing!!");
-      }
-
-      // Wait for refresh if already in progress
-      const newToken = await new Promise<string>((resolve) =>
-        subscribe(resolve)
-      );
-
-      // Retry the original request with the new token
-      original.headers = original.headers ?? {};
-      (original.headers as any).Authorization = `Bearer ${newToken}`;
-      console.log("Refreshed")
-      return api(original);
+        console.log("[api] dpublished new token -> retrying original");
+        original.headers = original.headers ?? {};
+        (original.headers as any).Authorization = `Bearer ${newToken}`;
+        return api(original);
     } catch (error) {
+      console.log("[api] refresh failed ->logout", error);
       isRefreshing = false;
       queue = [];
       await authBridge.callLogout();
