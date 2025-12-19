@@ -1,8 +1,11 @@
+import type { ComponentType } from "react";
 import type { OnboardingAnswers } from "./types";
 import GoalStep from "../components/steps/GoalStep";
 import DaysPerWeekStep from "../components/steps/DaysPerWeekStep";
-import type { ComponentType } from "react";
-
+import ExperienceStep from "../components/steps/ExperienceStep";
+import EquipmentStep from "../components/steps/EquipmentStep";
+import SessionLengthStep from "../components/steps/SessionLengthStep";
+import InjuriesStep from "../components/steps/InjuriesStep";
 
 export type StepKey = keyof OnboardingAnswers;
 
@@ -36,5 +39,33 @@ export const ONBOARDING_STEPS = [
     subtitle: "Pick what you can sustain, not your perfect week.",
     optional: false,
     Component: DaysPerWeekStep,
+  }),
+  makeStep({
+    key: "experience_level",
+    title: "What’s your training experience?",
+    subtitle: "This helps us pick the right volume and progression.",
+    optional: false,
+    Component: ExperienceStep,
+  }),
+  makeStep({
+    key: "equipment_access",
+    title: "Where do you usually train?",
+    subtitle: "Select all that apply.",
+    optional: false,
+    Component: EquipmentStep,
+  }),
+  makeStep({
+    key: "session_length",
+    title: "How long can you usually train?",
+    subtitle: "Pick what you can sustain most days.",
+    optional: false,
+    Component: SessionLengthStep,
+  }),
+  makeStep({
+    key: "injuries",
+    title: "Anything we should be careful with?",
+    subtitle: "Optional — but it helps keep training safe.",
+    optional: true, 
+    Component: InjuriesStep,
   }),
 ] as const;
