@@ -37,11 +37,15 @@ docker exec -it app-postgres psql -U 'pwd' -d db_dev
 
 # Query docker
 docker exec -it app-postgres psql -U 'pwd' -d db_dev -c "YOUR QUERY HERE"
+
 # from host
 psql "postgresql://username:pwd@127.0.0.1:5432/db_dev" -c "SELECT count(*) FROM users;" 
 
 # Check logs
 docker logs --tail 80 app-postgres
 ``
+
+**Need to add the variables env!! ( in mi /docker/.env is not workig i dont know why)**
+
 
 (We had to change the urls in settings to point the docker to 127.0.0.1)
