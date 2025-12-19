@@ -3,13 +3,14 @@ import { View, TextInput, Button, Text, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { useAuth } from "@/src/store/auth";
+import { getAPIErrorMessage } from "@/src/services/errors";
 
 export default function Login() {
   console.log("LOGIN RENDER");
   const t = useTheme();
   const router = useRouter();
   const doLogin = useAuth(s => s.doLogin);
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -17,12 +18,29 @@ export default function Login() {
   async function onsubmit() {
     setLoading(true);
     setErr(null);
+    if (!identifier) {
+      setErr("Identifier missing");
+      return;
+    }
     try {
-      await doLogin(email, password);
+      await doLogin(identifier, password);
       router.replace("/(tabs)");
     } catch (e: any) {
       console.log(e);
-      setErr("Invalid Credentials");
+      setErr(getAPIErrorMessage(e));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function onRegister() {
+    setLoading(true);
+    setErr(null);
+    try {
+      router.replace("/(auth)/register");
+    } catch (e: any) {
+      console.log(e);
+      setErr(getAPIErrorMessage(e));
     } finally {
       setLoading(false);
     }
@@ -32,11 +50,10 @@ export default function Login() {
     <View style={[s.wrap, { backgroundColor: t.colors.bg }]}>
       <Text style={[s.title, { color: t.colors.text }]}>Sign in Here</Text>
       <TextInput
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Email"
+        value={identifier}
+        onChangeText={setIdentifier}
+        placeholder="USername or Email"
         autoCapitalize="none"
-        keyboardType="email-address"
         style={[
           s.input,
           {
@@ -62,10 +79,13 @@ export default function Login() {
         ]}
         placeholderTextColor={t.colors.subtext}
       />
-      {err ? (
-        <Text style={{ color: t.colors.error, marginBottom: 8 }}>{err}</Text>
-      ) : null}
+      
       <Button title={loading ? "..." : "Login"} onPress={onsubmit} />
+      <Text style={{ color: t.colors.subtext, paddingTop: 8, textAlign:"center" }}>Not registered? <Text style={{ color: t.colors.accent}} onPress={onRegister}>click here!</Text></Text>
+        
+      {err ? (
+        <Text style={{ color: t.colors.error, paddingTop: 8, textAlign:"center" }}>{err}</Text>
+      ) : null}
     </View>
   );
 }

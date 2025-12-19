@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { loadMe as loadMeApi, login as loginApi, logout as logoutApi } from "../services/auth";
+import { loadMe as loadMeApi, login as loginApi, register as registerAPI, logout as logoutApi } from "../services/auth";
 import { authBridge } from "../services/authBridge";
-
+import type { User } from "@/src/types/user";
 
 const secureStorage = {
   getItem: async (key: string) => (await SecureStore.getItemAsync(key)) ?? null,
@@ -15,7 +15,7 @@ const secureStorage = {
   },
 };
 
-type User = {id:number, email:string, username:string}
+
 
 type AuthState = {
   accessToken: string | null;
@@ -25,7 +25,9 @@ type AuthState = {
   setTokens: (access: string, refresh:string) => Promise<void>;
   setAccessToken:(token:string |null) => Promise<void>;
   
-  doLogin: (email:string, password:string) => Promise<void>;
+  doLogin: (identifier:string, password:string) => Promise<void>;
+  doRegister: (email:string, username:string, password:string) => Promise<void>;
+
   loadMe:() => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -66,10 +68,14 @@ export const useAuth = create<AuthState>()(
           }
         },
 
-        doLogin: async (email, password) => {
-          const res = await loginApi(email, password);
+        doLogin: async (identifier, password) => {
+          const res = await loginApi(identifier, password);
           await get().setTokens(res.data.access_token, res.data.refresh_token);
           await get().loadMe();
+        },
+        doRegister: async (email,username, password) => {
+          await registerAPI(email, username, password);
+          await get().doLogin(email, password)
         },
 
         logout: async () => {
@@ -84,6 +90,11 @@ export const useAuth = create<AuthState>()(
     {
       name: "auth-secure",
       storage: createJSONStorage(() => secureStorage),
+      partialize: (state) => ({
+        accessToken:state.accessToken,
+        refreshToken:state.refreshToken,
+        user:state.user
+      }),
 
       // ✅ you already added this — keep it
       onRehydrateStorage: () => (state) => {

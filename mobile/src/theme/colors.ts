@@ -26,39 +26,67 @@ export type ThemeColors = {
     note: string;   // notices
   };
 };
-
 export const lightColors: ThemeColors = {
-  // Base
-  bg: "#F1F8FF",           // soft sky-white
-  card: "#FFFFFF",         // solid white card (use for non-glass cards)
-  text: "#102A43",         // deep slate blue (great daytime readability)
-  subtext: "#486581",      // steel gray-blue
-  title: "#102A43", 
-  border: "rgba(0, 120, 160, 0.22)",
+  bg: "#F0EEE9",           // Cloud Dancer-ish :contentReference[oaicite:2]{index=2}
+  card: "#FFFFFF",
+  text: "#102A43",
+  subtext: "#486581",
+  title: "#102A43",
+  border: "rgba(16, 42, 67, 0.18)",
 
-  // Accents
-  accent: "#0077B6",       // vivid cool blue (headings/labels)
-  success: "#2A9D8F",      // turquoise-green
-  warning: "#F4A261",      // muted amber (readable on light)
-  error: "#E63946",        // clear red
+  accent: "#0077B6",
+  success: "#2A9D8F",
+  warning: "#F4A261",
+  error: "#E63946",
   link: "#2563EB",
 
-  // Effects
   overlay: "rgba(0,0,0,0.06)",
-  modal: "#EAF2FB",
-  shadow: "rgba(0,0,0,0.25)",
+  modal: "#FFFFFF",
+  shadow: "rgba(0,0,0,0.18)",
 
-  // Console surface (light)
   console: {
-    bg: "rgba(0, 40, 60, 0.06)",         // cool translucent pane over #F1F8FF
-    border: "rgba(0, 120, 160, 0.22)",   // thin cyan/steel edge
-    chipBg: "rgba(0, 119, 182, 0.12)",   // for the "$ status" pill
-    chipBorder: "rgba(0, 119, 182, 0.35)",
-    prompt: "#0077B6",                   // headings / prompts
-    value: "#00A896",                    // info values
-    note: "#F4A261",                     // notices / hints
+    bg: "rgba(16, 42, 67, 0.04)",
+    border: "rgba(16, 42, 67, 0.14)",
+    chipBg: "rgba(0, 119, 182, 0.10)",
+    chipBorder: "rgba(0, 119, 182, 0.28)",
+    prompt: "#0077B6",
+    value: "#00A896",
+    note: "#F4A261",
   },
 };
+
+// export const lightColors: ThemeColors = {
+//   // Base
+//   bg: "#F1F8FF",           // soft sky-white
+//   card: "#FFFFFF",         // solid white card (use for non-glass cards)
+//   text: "#102A43",         // deep slate blue (great daytime readability)
+//   subtext: "#486581",      // steel gray-blue
+//   title: "#102A43", 
+//   border: "rgba(0, 120, 160, 0.22)",
+
+//   // Accents
+//   accent: "#0077B6",       // vivid cool blue (headings/labels)
+//   success: "#2A9D8F",      // turquoise-green
+//   warning: "#F4A261",      // muted amber (readable on light)
+//   error: "#E63946",        // clear red
+//   link: "#2563EB",
+
+//   // Effects
+//   overlay: "rgba(0,0,0,0.06)",
+//   modal: "#EAF2FB",
+//   shadow: "rgba(0,0,0,0.25)",
+
+//   // Console surface (light)
+//   console: {
+//     bg: "rgba(0, 40, 60, 0.06)",         // cool translucent pane over #F1F8FF
+//     border: "rgba(0, 120, 160, 0.22)",   // thin cyan/steel edge
+//     chipBg: "rgba(0, 119, 182, 0.12)",   // for the "$ status" pill
+//     chipBorder: "rgba(0, 119, 182, 0.35)",
+//     prompt: "#0077B6",                   // headings / prompts
+//     value: "#00A896",                    // info values
+//     note: "#F4A261",                     // notices / hints
+//   },
+// };
 
 export const darkColors: ThemeColors = {
   // Base
