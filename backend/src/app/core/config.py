@@ -7,6 +7,11 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     JWT_SECRET: str
     JWT_ALG: str
+    
+    POSTGRES_USER:str
+    POSTGRES_PASSWORD:str
+    POSTGRES_DB:str
+    POSTGRES_PORT:int=5432
 
     ACCESS_TOKEN_EXPIRE_SECONDS:int = 60 *15 # 15min
     REFRESH_TOKEN_EXPIRE_SECONDS:int=60*60*24*7 # 7 days

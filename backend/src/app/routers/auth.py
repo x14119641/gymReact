@@ -13,6 +13,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/register", response_model=UserOut)
 async def register(body: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    print("Body: ", body)
     q = select(User).where(
         (User.email == body.email) | (User.username == body.username)
     )
