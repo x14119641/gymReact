@@ -6,80 +6,104 @@ import {
   type OnboardingAnswers,
 } from "../model/types";
 import { ONBOARDING_STEPS } from "../model/onboardingSteps";
+import OnboardingReview from "../components/OnboardingReview";
+import { useRouter } from "expo-router";
+import type { ComponentType } from "react";
+
 
 export default function OnboardingFlowScreen() {
+  const router = useRouter();
+
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<OnboardingAnswers>(
     DEFAULT_ONBOARDING_ANSWERS
   );
 
-  const step = ONBOARDING_STEPS[stepIndex];
-  const totalSteps = ONBOARDING_STEPS.length;
+  const dataStepsCount = ONBOARDING_STEPS.length;
+  const isReviewStep = stepIndex === dataStepsCount;
+
+  const totalStepsShown = dataStepsCount + 1;
   const stepNumber = stepIndex + 1;
 
-  const valueForStep = answers[step.key];
+  const step = !isReviewStep ? ONBOARDING_STEPS[stepIndex] : null;
+  const valueForStep = step ? answers[step.key] : null;
 
   const canGoNext = useMemo(() => {
-    if (step.optional) return true;
-
     // Required steps:
     // - value must not be null
+    // - value must not be null
     // - arrays must have at least one item
-    if (valueForStep === null) return false;
-    if (Array.isArray(valueForStep)) return valueForStep.length > 0;
-    return true;
-  }, [step.optional, valueForStep]);
+    if (isReviewStep) return true;
+    if (!step) return false;
+    if (step.optional) return true;
 
-  function setStepValue(next: typeof valueForStep) {
-    setAnswers((prev) => ({...prev, [step.key]:next}) as OnboardingAnswers)
+    if (Array.isArray(valueForStep)) return valueForStep.length > 0;
+    return valueForStep !== null;
+
+  }, [isReviewStep,step, valueForStep]);
+
+  function setStepValue(next: any) {
+    if (!step) return;
+    setAnswers((prev) => ({ ...prev, [step.key]: next } as OnboardingAnswers));
   }
 
   function goBack() {
     if (stepIndex === 0) {
-        // If this is a modal, you might close it here. For now do nothing
-        Alert.alert("Onboarding", "You are on the first step.");
-        return;
+      Alert.alert("Onboarding", "You are on the first step.");
+      return;
     }
-    setStepIndex((i)=> i-1);
+    setStepIndex((i) => i - 1);
   }
 
   function goNext() {
-    if (stepIndex===totalSteps-1) {
-        // For now just show payload, but after will POST answers to backend once the onboarding is complated and navigate to tabs.
-        Alert.alert("Onboarding payload", JSON.stringify(answers, null, 2));
-        return ;
+    if (isReviewStep) {
+      Alert.alert("Onboarding payload", JSON.stringify(answers, null, 2), [
+        {text: "Go to home", onPress:() => router.replace("/(tabs)"),
+
+        }
+      ]);
+      return;
     }
-    setStepIndex((i)=>i+1);
+     // If we're on the last data step, next goes to Review
+    setStepIndex((i) => Math.min(i + 1, dataStepsCount));
   }
 
   function skip() {
-    // Only for optional steps (we’ll hide skip otherwise)
-    // Define "skipped" values:
-    const skippedValue =
-      valueForStep === null ? null : Array.isArray(valueForStep) ? [] : null;
+    if (!step) return;
+    // arrays store as [], scalaras as null
+    const skippedValue = Array.isArray(answers[step.key]) ? [] : null;
 
-    setStepValue(skippedValue as any);
-    setStepIndex((i) => Math.min(i + 1, totalSteps - 1));
+    setAnswers((prev) => ({...prev, [step.key]:skippedValue}) as OnboardingAnswers);
+    setStepIndex((i) => Math.min(i+1, dataStepsCount));
   }
 
-  const PrimaryLabel = stepIndex === totalSteps - 1 ? "Finish" : "Next";
-
-  const StepComponent = step.Component;
+  const primaryLabel = isReviewStep ? "Finish" : "Next";
 
   return (
     <View style={{ flex: 1 }}>
       <OnboardingStepLayout
         stepNumber={stepNumber}
-        totalSteps={totalSteps}
-        title={step.title}
-        subtitle={step.subtitle}
-        primaryLabel={PrimaryLabel}
+        totalSteps={totalStepsShown}
+        title={isReviewStep ? "All set" : step!.title}
+        subtitle={
+          isReviewStep
+            ? "Review your choices. You can change them anytime later."
+            : step!.subtitle
+        }
+        primaryLabel={primaryLabel}
         canGoNext={canGoNext}
         onBack={goBack}
         onNext={goNext}
-        onSkip={step.optional ? skip : undefined}
+        onSkip={!isReviewStep && step!.optional ? skip : undefined}
       >
-        <StepComponent value={valueForStep as any} onChange={setStepValue as any} />
+        {isReviewStep ? (
+          <OnboardingReview answers={answers} />
+        ) : (
+          (() => {
+            const StepComponent = step!.Component as ComponentType<any>;
+            return <StepComponent value={valueForStep as any} onChange={setStepValue} />;
+          })()
+        )}
       </OnboardingStepLayout>
     </View>
   );

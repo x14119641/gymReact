@@ -6,6 +6,8 @@ import ExperienceStep from "../components/steps/ExperienceStep";
 import EquipmentStep from "../components/steps/EquipmentStep";
 import SessionLengthStep from "../components/steps/SessionLengthStep";
 import InjuriesStep from "../components/steps/InjuriesStep";
+import SportsBackgroundStep from "../components/steps/SportsBackgroundStep";
+
 
 export type StepKey = keyof OnboardingAnswers;
 
@@ -68,4 +70,11 @@ export const ONBOARDING_STEPS = [
     optional: true, 
     Component: InjuriesStep,
   }),
+  makeStep({
+  key: "sports_background",
+  title: "Any sports you do now or did in the past?",
+  subtitle: "Optional — helps personalize your training style.",
+  optional: true,
+  Component: SportsBackgroundStep,
+}),
 ] as const;

@@ -32,6 +32,7 @@ export type InjuryArea =
 
 export type SportBackground =
   | "weights"
+  | "athletism"
   | "cycling"
   | "calisthenics"
   | "running"
