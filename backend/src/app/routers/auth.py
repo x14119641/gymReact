@@ -7,13 +7,12 @@ from ..core.security import create_refresh_token, hash_password, verify_password
 from ..models.user import User
 from ..schemas.auth import RegisterRequest, LoginRequest, TokenResponse, UserOut
 from jose import JWTError, jwt
-
+ 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post("/register", response_model=UserOut)
 async def register(body: RegisterRequest, db: AsyncSession = Depends(get_db)):
-    print("Body: ", body)
     q = select(User).where(
         (User.email == body.email) | (User.username == body.username)
     )

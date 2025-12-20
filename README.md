@@ -28,7 +28,7 @@ Goal: track workouts, support onboarding metadata, later AI guided programming (
   4) Add extended user metadata (lifestyle)
   5) Add `user_measurements` model (time-series)
   6) Connect profile + measurements to workouts 
-  7) 
+  7)  
 
 
 ## Quick start
