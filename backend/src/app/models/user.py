@@ -28,6 +28,9 @@ class UserProfile(Base):
     injuries:Mapped[List[str]] = mapped_column(ARRAY(String(90)))
     sports_background:Mapped[List[str]] = mapped_column(ARRAY(String(90)))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    onboarding_completed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    
     
     user: Mapped["User"] = relationship(back_populates="profile")
 
