@@ -2,6 +2,7 @@ import os
 import pytest
 import psycopg
 import pytest_asyncio
+import uuid
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.engine import make_url
 from alembic.config import Config
@@ -99,3 +100,34 @@ async def client(app):
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as c:
         yield c
+        
+@pytest_asyncio.fixture
+async def user_payload():
+    random_user = uuid.uuid4().hex[:8]
+    return {
+        "email": f"test_{random_user}@test.com",
+        "username": f"test_user_{random_user}",
+        "password": "supersecret"
+    } 
+    
+    
+@pytest_asyncio.fixture
+async def register_user(client, user_payload):
+    r = await client.post("/auth/register", json=user_payload)
+    assert r.status_code ==200, r.text
+    return r.json()
+
+
+@pytest_asyncio.fixture
+async def auth_tokens(client, user_payload, register_user):
+    r = await client.post(
+        "/auth/login",
+        json={"identifier": user_payload["email"], "password": user_payload["password"]},
+    )
+    assert r.status_code == 200, r.text
+    data = r.json()
+    return {"access_token": data["access_token"], "refresh_token":data["refresh_token"]}
+
+@pytest_asyncio.fixture
+async def auth_headers(auth_tokens):
+    return {"Authorization": f"Bearer {auth_tokens['access_token']}"}
