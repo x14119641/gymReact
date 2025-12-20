@@ -12,7 +12,7 @@ Goal: track workouts, support onboarding metadata, later AI guided programming (
 ## Current status
 - [x] Mobile onboarding flow (goal, days/week, experience, equipment, injuries, sports, session length + review)
 - [x] Backend: users + user_profiles table + Alembic migrations
-- [ ] Backend endpoint: POST /profile/onboarding
+- [x] Backend endpoint: POST /profile/onboarding
 - [ ] Backend endpoint: GET /me includes onboarding_completed
 - [ ] Mobile: gate app based on onboarding completion
 - [ ] Profile screen (view / edit onboarding data)
