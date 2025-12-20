@@ -1,27 +1,42 @@
-BackEnd
+# BackEnd
 
-Login, API's, Database Interactions so far.
+FastAPI + SQAlquemy + Alembic + Postgres (docker)
 
-# Set Variables .env Files (Already done)
-Such as DATABASE_URL, JWT_SECRET, JWT_ALG, ACCESS_TTL_MIN
 
-# Run backend
-```PYTHONPATH=src uvicorn app.main:app --reload```
+## Environment (.env)
+```bash
+DATABASE_URL=
 
-# Keep up with Models and migrations (Very Important!)
-Everytime i add a new model or i modify it:
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+POSTGRES_PORT=5432
+
+JWT_SECRET=
+JWT_ALG=
+ACCESS_TOKEN_EXPIRE_SECONDS=
+REFRESH_TOKEN_EXPIRE_SECONDS=
+``` 
+Note: Docker env in `backend/docker/` is not working well so i had them in the main `.env`.
+
+## Run backend
+```bash
+PYTHONPATH=src uvicorn app.main:app --reload
 ```
+
+## Keep up with Models and migrations (Very Important!)
+Everytime i add a new model or i modify it:
+```bash
 PYTHONPATH=src alembic revision --autogenerate -m "describe your change"
 PYTHONPATH=src alembic upgrade head
+# Show current revision
+alembic current
+# Rollback last migration 
+alembic downgrade -1
 ```
 
-# Show current DB revision
-```alambic current```
 
-# Rollback last migration 
-```alembic downgrade -i```
-
-# Now we are using Docker image for postgres in order to avoid errors when upgrading arch
+## Now we are using Docker image for postgres in order to avoid errors when upgrading arch
 ```bash
 # Start in background (recommended)
 docker compose up -d
@@ -43,9 +58,6 @@ psql "postgresql://username:pwd@127.0.0.1:5432/db_dev" -c "SELECT count(*) FROM 
 
 # Check logs
 docker logs --tail 80 app-postgres
-``
-
-**Need to add the variables env!! ( in mi /docker/.env is not workig i dont know why)**
-
+```
 
 (We had to change the urls in settings to point the docker to 127.0.0.1)
