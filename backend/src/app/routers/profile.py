@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_, is_, update
+from sqlalchemy import select
 from ..core.database import get_db
 from ..models.user import UserProfile
 from ..core.security import get_current_user
@@ -20,7 +20,7 @@ async def onboarding_page(
     profile = await db.scalar(
         select(UserProfile).where(UserProfile.user_id == current_user)
     )
-    now = datetime.now(timezone)
+    now = datetime.now(timezone.utc)
     
     if profile is None:
         # Create Profile
@@ -46,7 +46,7 @@ async def onboarding_page(
 @router.get("/me", response_model=ProfileOut|None)
 async def read_profile(
     current_user: int = Depends(get_current_user), db: AsyncSession = Depends(get_db)
-):
+):  
     profile = await db.scalar(
         select(UserProfile).where(UserProfile.user_id == current_user)
     )

@@ -11,7 +11,6 @@ class ProfileIn(BaseModel):
     session_length:str
     injuries:List[str]
     sports_background:List[str]
-    onboarding_completed_at:datetime
 
 
 class ProfileOut(BaseModel):
