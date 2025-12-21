@@ -9,6 +9,7 @@ import InjuriesStep from "../components/steps/InjuriesStep";
 import SportsBackgroundStep from "../components/steps/SportsBackgroundStep";
 
 
+
 export type StepKey = keyof OnboardingAnswers;
 
 export type OnboardingStepDef<K extends StepKey = StepKey> = {

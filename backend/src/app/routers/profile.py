@@ -36,9 +36,11 @@ async def onboarding_page(
     profile.sports_background = body.sports_background
     
     # I know 'injuries' and 'sports background' are optional, may be empty
-    # If empty any ot those, i dont want to store onboarding_completed_at
-    if body.injuries or body.sports_background:
+    # If they have info then i store the date
+
+    if body.injuries and body.sports_background:
         if profile.onboarding_completed_at is None:
+            
             profile.onboarding_completed_at = now
 
     await db.commit()

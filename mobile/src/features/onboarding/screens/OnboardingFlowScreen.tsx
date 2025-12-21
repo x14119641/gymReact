@@ -9,6 +9,7 @@ import { ONBOARDING_STEPS } from "../model/onboardingSteps";
 import OnboardingReview from "../components/OnboardingReview";
 import { useRouter } from "expo-router";
 import type { ComponentType } from "react";
+import { submitOnboarding } from "@/src/services/profile";
 
 
 export default function OnboardingFlowScreen() {
@@ -55,14 +56,16 @@ export default function OnboardingFlowScreen() {
     setStepIndex((i) => i - 1);
   }
 
-  function goNext() {
+  async function goNext() {
     if (isReviewStep) {
-      Alert.alert("Onboarding payload", JSON.stringify(answers, null, 2), [
-        {text: "Go to home", onPress:() => router.replace("/(tabs)"),
-
-        }
-      ]);
-      return;
+      try {
+        await submitOnboarding(answers);
+        router.replace("/(tabs)");
+        return;
+      } catch (error) {
+        Alert.alert(`Onboarding failed with error:  ${error}`)
+        return; // stay on the review page page
+      }
     }
      // If we're on the last data step, next goes to Review
     setStepIndex((i) => Math.min(i + 1, dataStepsCount));

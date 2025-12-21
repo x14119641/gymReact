@@ -24,5 +24,5 @@ class ProfileOut(BaseModel):
     injuries:List[str]
     sports_background:List[str]
     created_at:datetime
-    onboarding_completed_at:datetime
+    onboarding_completed_at:datetime | None = None
     
