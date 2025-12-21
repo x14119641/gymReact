@@ -10,7 +10,6 @@ from datetime import datetime, timezone
 
 router = APIRouter(prefix="/profile", tags=["profile"])
 
-
 @router.post("/onboarding", response_model=ProfileOut)
 async def onboarding_page(
     body: ProfileIn,
@@ -35,8 +34,12 @@ async def onboarding_page(
     profile.session_length = body.session_length
     profile.injuries = body.injuries
     profile.sports_background = body.sports_background
-
-    profile.onboarding_completed_at = now
+    
+    # I know 'injuries' and 'sports background' are optional, may be empty
+    # If empty any ot those, i dont want to store onboarding_completed_at
+    if body.injuries or body.sports_background:
+        if profile.onboarding_completed_at is None:
+            profile.onboarding_completed_at = now
 
     await db.commit()
     await db.refresh(profile)
