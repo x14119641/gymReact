@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 
 router = APIRouter(prefix="/profile", tags=["profile"])
 
+
 @router.post("/onboarding", response_model=ProfileOut)
 async def onboarding_page(
     body: ProfileIn,
@@ -20,12 +21,14 @@ async def onboarding_page(
         select(UserProfile).where(UserProfile.user_id == current_user)
     )
     now = datetime.now(timezone.utc)
-    
+
     if profile is None:
         # Create Profile
         profile = UserProfile(user_id=current_user)
         db.add(profile)
-    
+        # await db.commit()
+        # await db.refresh(profile)
+
     # Update fields
     profile.goal = body.goal
     profile.days_per_week = body.days_per_week
@@ -34,24 +37,35 @@ async def onboarding_page(
     profile.session_length = body.session_length
     profile.injuries = body.injuries
     profile.sports_background = body.sports_background
-    
+
     # I know 'injuries' and 'sports background' are optional, may be empty
     # If they have info then i store the date
+    required_ok = (
+        body.goal
+        and body.days_per_week
+        and body.experience_level
+        and isinstance(body.equipment_access, list)
+        and len(body.equipment_access) > 0
+    )
 
-    if body.injuries and body.sports_background:
-        if profile.onboarding_completed_at is None:
-            
-            profile.onboarding_completed_at = now
+    optional_ok = (
+        isinstance(body.injuries, list)
+        and len(body.injuries) > 0
+        and isinstance(body.sports_background, list)
+        and len(body.sports_background) > 0
+    )
+    if required_ok and optional_ok and profile.onboarding_completed_at is None:
+        profile.onboarding_completed_at = now
 
     await db.commit()
     await db.refresh(profile)
     return profile
 
 
-@router.get("/me", response_model=ProfileOut|None)
+@router.get("/me", response_model=ProfileOut | None)
 async def read_profile(
     current_user: int = Depends(get_current_user), db: AsyncSession = Depends(get_db)
-):  
+):
     profile = await db.scalar(
         select(UserProfile).where(UserProfile.user_id == current_user)
     )

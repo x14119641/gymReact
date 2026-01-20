@@ -10,6 +10,7 @@ import OnboardingReview from "../components/OnboardingReview";
 import { useRouter } from "expo-router";
 import type { ComponentType } from "react";
 import { submitOnboarding } from "@/src/services/profile";
+import { userProfileRecord } from "@/src/store/profile";
 
 
 export default function OnboardingFlowScreen() {
@@ -60,7 +61,9 @@ export default function OnboardingFlowScreen() {
     if (isReviewStep) {
       try {
         await submitOnboarding(answers);
-        router.replace("/(tabs)");
+        await userProfileRecord.getState().loadProfileMe();
+        // router.replace("/(tabs)");
+        console.log("[onboarding] submit success -> reloading profile");
         return;
       } catch (error) {
         Alert.alert(`Onboarding failed with error:  ${error}`)

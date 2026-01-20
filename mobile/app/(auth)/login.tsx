@@ -24,7 +24,7 @@ export default function Login() {
     }
     try {
       await doLogin(identifier, password);
-      router.replace("/(tabs)");
+      // router.replace("/(tabs)");
     } catch (e: any) {
       console.log(e);
       setErr(getAPIErrorMessage(e));

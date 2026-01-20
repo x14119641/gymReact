@@ -25,7 +25,7 @@ export default function Register() {
         setErr(null);
         try {
             await doRegister(email,username, password);
-            router.replace("/(auth)/onboarding");
+            // router.replace("/(auth)/onboarding");
         } catch (e:any) {
             console.log(e);
             setErr(getAPIErrorMessage(e));

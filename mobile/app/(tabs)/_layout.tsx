@@ -9,75 +9,38 @@ export default function RootTabs() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: "#ff6579a",
-        headerStyle: {
-          backgroundColor: t.colors.card
-        },
-        headerShadowVisible:false,
-        headerTintColor:'#fff',
-        tabBarStyle: {
-          backgroundColor: t.colors.accent
-        },
-        headerShown:false
+        headerStyle: { backgroundColor: t.colors.card },
+        headerShadowVisible: false,
+        headerTintColor: "#fff",
+        tabBarStyle: { backgroundColor: t.colors.accent },
+        headerShown: false,
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "home-sharp" : "home-outline"}
-              color={color}
-              size={24}
-            ></Ionicons>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="about"
-        options={{
-          title: "About",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
-              color={color}
-              size={24}
-            ></Ionicons>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="newPage"
-        options={{
-          title: "NewPage",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={
-                focused ? "airplane" : "airplane-outline"
-              }
-              color={color}
-              size={24}
-            ></Ionicons>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: "Settings",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={
-                focused ? "settings" : "settings-outline"
-              }
-              color={color}
-              size={24}
-            ></Ionicons>
-          ),
-        }}
-      />
+      <Tabs.Screen name="index" options={{ title: "Home",
+        tabBarIcon: ({ color, focused }) => (
+          <Ionicons name={focused ? "home-sharp" : "home-outline"} color={color} size={24} />
+        ),
+      }} />
+      <Tabs.Screen name="about" options={{ title: "About",
+        tabBarIcon: ({ color, focused }) => (
+          <Ionicons name={focused ? "information-circle" : "information-circle-outline"} color={color} size={24} />
+        ),
+      }} />
+      <Tabs.Screen name="newPage" options={{ title: "NewPage",
+        tabBarIcon: ({ color, focused }) => (
+          <Ionicons name={focused ? "airplane" : "airplane-outline"} color={color} size={24} />
+        ),
+      }} />
+      <Tabs.Screen name="settings" options={{ title: "Settings",
+        tabBarIcon: ({ color, focused }) => (
+          <Ionicons name={focused ? "settings" : "settings-outline"} color={color} size={24} />
+        ),
+      }} />
+      <Tabs.Screen name="profile/index" options={{ title: "Profile",
+        tabBarIcon: ({ color, focused }) => (
+          <Ionicons name={focused ? "person" : "person-outline"} color={color} size={24} />
+        ),
+      }} />
     </Tabs>
   );
 }

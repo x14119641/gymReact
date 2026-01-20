@@ -14,19 +14,22 @@ export default function SettingsScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  async function  handleLogout() {
-    if (loading) return;
-    setLoading(true);
-    try {
-      await logoutApi();
-    } catch (e) {
-      console.log("Error in Seeings Screen:", e);
-    } finally {
-      await logout();
+  async function handleLogout() {
+  if (loading) return;
+  setLoading(true);
+
+  try {
+    await logout(); // clears tokens + best-effort backend logout
+  } finally {
+    // force route AFTER state is cleared, on next frame (prevents “not mounted” issues)
+    requestAnimationFrame(() => {
       router.replace("/(auth)/login");
-      setLoading(false);
-    }
+    });
+    setLoading(false);
   }
+}
+
+
 
   return (
     <BaseLayout>

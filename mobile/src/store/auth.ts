@@ -9,6 +9,7 @@ import {
 } from "../services/auth";
 import { authBridge } from "../services/authBridge";
 import type { User } from "@/src/types/user";
+import { userProfileRecord } from "./profile";
 
 const secureStorage = {
   getItem: async (key: string) => (await SecureStore.getItemAsync(key)) ?? null,
@@ -49,7 +50,7 @@ export const useAuth = create<AuthState>()(
       // register callbacks once when store is created
       authBridge.setOnLogout(() => get().logout());
       authBridge.setOnAccessToken((t) => get().setAccessToken(t));
-      
+
       return {
         accessToken: null,
         refreshToken: null,
@@ -80,7 +81,7 @@ export const useAuth = create<AuthState>()(
             set({ user: res.data });
           } catch (error: any) {
             console.log("Error in loadME: ", error);
-            set({ user: null, accessToken: null, });
+            set({ user: null, accessToken: null, refreshToken: null });
           }
         },
 
@@ -109,9 +110,9 @@ export const useAuth = create<AuthState>()(
           authBridge.setAccessToken(null);
           authBridge.setRefreshToken(null);
           set({ user: null, accessToken: null, refreshToken: null });
+          userProfileRecord.getState().clearProfile();
           console.log("[store] logout called");
         },
-        
       };
     },
     {
@@ -122,9 +123,7 @@ export const useAuth = create<AuthState>()(
         refreshToken: state.refreshToken,
         user: state.user,
       }),
-      
 
-      // ✅ you already added this — keep it
       onRehydrateStorage: () => (state) => {
         if (!state) return;
         authBridge.setAccessToken(state.accessToken);
