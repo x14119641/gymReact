@@ -1,5 +1,29 @@
 # Dev Log
 
+## 2026-01-20
+- ImplementedGET /profiles/me
+- Fixed critical onboarding gate bug
+  - Root cause: users without profile_user record caused infinite loop
+- Stabilized auth + routing integration
+  - Fixed infinite loops caused by redirects in RootLayout
+  - Properly declared (onboarding) route group to avoid router warnings
+  - Created index files when missing
+- HArdened acces /refresh token hadnling
+  - Restricted refresh logic to 401 only (no refresh in 403)
+  - Prevented refresh attempts on auth endpoints
+- Confirmed correct behaviur for:
+  - New users
+  - Existing users tuwhout profile records
+  - logout
+  - Token refresh during active sessions
+
+- UX LIMITATION
+  - On full app reload (r, after run npx start expo) the screen goes to loading, login, and then the user (due refresh token). I will accept this for now   
+  
+Next:
+- Not sure, perhaps some clean/refactoring.
+- Start to think in home page, and some screens i will ned, for example "today", workouts and i guess polish profiles and settings.
+
 
 ## 2025-12-21
 - ImplementedGET /profiles/me
