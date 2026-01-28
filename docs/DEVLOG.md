@@ -1,5 +1,29 @@
 # Dev Log
 
+## 2026-01-28
+- NAvigation / App structure
+  - Simplified bottom tav navigation to Home / Worjout / Progress / Profile
+  - Removed unusued screens (about, settings, newPage) from the main tab flow
+  - Created placeholder for WOrkout and Progress screens
+  - Aligned Expor Router structure with intended user journey
+- UX / Architecture Decisions
+  - Home -> heroStats, weekdays (today selected), quick actions
+  - Workout -> Session editind and history
+  - PRogress -> Future analytics and trends
+  - Profile -> user info, plans, settings   
+
+- Next:
+  - Think about calendar "panel" in weekdays
+  - Start the Add Workout flow
+    - User adds a workout via the WeekDays button
+    - A workout session appears under WeekDays as a card / row
+    - Support multiple sessions per day (2–3 workouts)
+- Polish Profile
+  - Include settings and plan
+  - Define clean structure for both
+- No back end work (fronend-only focus)
+
+
 ## 2026-01-20
 - ImplementedGET /profiles/me
 - Fixed critical onboarding gate bug
