@@ -16,8 +16,9 @@ import {
   addDays,
   isSameDay,
 } from "date-fns";
-import Ionicons from "@expo/vector-icons/Ionicons";
+// import Ionicons from "@expo/vector-icons/Ionicons";
 import { Container } from "./Container";
+import { useTheme } from "../theme/ThemeProvider";
 
 function buildWeek(baseDate: Date) {
   const weekStart = startOfWeek(baseDate, { weekStartsOn: 1 }); // Monday
@@ -25,6 +26,7 @@ function buildWeek(baseDate: Date) {
 }
 
 export default function WeekCard() {
+  const t = useTheme();
   // layout / paging
   const [pageW, setPageW] = React.useState<number | null>(null);
   const [pageIndex, setPageIndex] = React.useState(1); // 0=prev,1=curr,2=next
@@ -41,15 +43,21 @@ export default function WeekCard() {
   const anchorDate = React.useRef(today).current; // <-- fixed weekday anchor (today -thurdsay-)
   const [selectedDate, setSelectedDate] = React.useState<Date>(anchorDate);
 
-  const prev = React.useMemo(() => buildWeek(subWeeks(baseDate, 1)), [baseDate]);
+  const prev = React.useMemo(
+    () => buildWeek(subWeeks(baseDate, 1)),
+    [baseDate],
+  );
   const curr = React.useMemo(() => buildWeek(baseDate), [baseDate]);
-  const next = React.useMemo(() => buildWeek(addWeeks(baseDate, 1)), [baseDate]);
+  const next = React.useMemo(
+    () => buildWeek(addWeeks(baseDate, 1)),
+    [baseDate],
+  );
   const pages = React.useMemo(() => [prev, curr, next], [prev, curr, next]);
 
   // header (which week is visible)
   const displayDate = React.useMemo(
     () => addWeeks(baseDate, pageIndex - 1),
-    [baseDate, pageIndex]
+    [baseDate, pageIndex],
   );
   const weekNumber = getWeek(displayDate, {
     weekStartsOn: 1,
@@ -111,7 +119,9 @@ export default function WeekCard() {
               },
             ]}
           >
-            <Text style={styles.dayName}>{d}</Text>
+            <Text style={[styles.dayName, { color: t.colors.subtext }]}>
+              {d}
+            </Text>
           </View>
         ))}
       </View>
@@ -137,13 +147,22 @@ export default function WeekCard() {
                 {
                   width: i === COLS - 1 ? lastCellW : cellW,
                   marginRight: i < COLS - 1 ? GAP : 0,
+                  borderColor: isSelected
+                    ? t.colors.accent
+                    : t.colors.console.border,
+                  backgroundColor: isSelected
+                    ? t.colors.console.chipBg
+                    : "transparent",
                 },
-                isSelected && styles.selectedCell, 
               ]}
             >
               <Text
-                style={[styles.dateText, isSelected && styles.selectedText]}
-              >
+              style={[
+                styles.dateText,
+                { color: t.colors.text },
+                isSelected && { fontWeight: "900" },
+              ]}
+            >
                 {format(d, "d")}
               </Text>
 
@@ -160,87 +179,89 @@ export default function WeekCard() {
   );
 
   return (
-    <Container variant="console">
-      <View style={{ width: "100%" }}  onLayout={onLayoutBox}>
-      {!pageW ? (
-        <Text style={styles.title}>Loading…</Text>
-      ) : (
-        <>
-          <Text style={styles.title}>Week: {weekNumber}</Text>
-          <DayNames />
-
-          <FlatList
-            ref={listRef}
-            horizontal
-            pagingEnabled
-            bounces={false}
-            decelerationRate="fast"
-            showsHorizontalScrollIndicator={false}
-            data={pages}
-            keyExtractor={(_, idx) =>
-              idx === 0 ? "prev" : idx === 1 ? "curr" : "next"
-            }
-            renderItem={({ item }) => <WeekStrip dates={item} />}
-            getItemLayout={(_, index) => ({
-              length: pageW!,
-              offset: pageW! * index,
-              index,
-            })}
-            initialNumToRender={3}
-            onMomentumScrollEnd={handlePageChange}
-            removeClippedSubviews={false}
-          />
-          <View style={{height:1, backgroundColor:"#336543", marginVertical:12}}/>
-          <Pressable onPress={() => console.log("ADD it!")}>
-            {/* <Ionicons name={"add"} size={20} color={"#697657"} style={styles.icon} /> */}
-            <Text style={{color:"#236548", paddingHorizontal: 12, textDecorationLine:"underline"}}>Add Workout</Text>
-          </Pressable>
-          
-          {/* Print your "X" variable (the selected full date) */}
-          <Text style={styles.selectedLabel}>
-            Selected: {format(selectedDate, "yyyy-MM-dd")}
+    <Container variant="default" density="compact">
+      <View style={{ width: "100%" }} onLayout={onLayoutBox}>
+        {!pageW ? (
+          <Text style={[styles.title, { color: t.colors.subtext }]}>
+            Loading…
           </Text>
-        </>
-      )}
-    </View>
+        ) : (
+          <>
+            <Text style={[styles.title, { color: t.colors.text }]}>
+              Week: {weekNumber}
+            </Text>
+            <DayNames />
+
+            <FlatList
+              ref={listRef}
+              horizontal
+              pagingEnabled
+              bounces={false}
+              decelerationRate="fast"
+              showsHorizontalScrollIndicator={false}
+              data={pages}
+              keyExtractor={(_, idx) =>
+                idx === 0 ? "prev" : idx === 1 ? "curr" : "next"
+              }
+              renderItem={({ item }) => <WeekStrip dates={item} />}
+              getItemLayout={(_, index) => ({
+                length: pageW!,
+                offset: pageW! * index,
+                index,
+              })}
+              initialNumToRender={3}
+              onMomentumScrollEnd={handlePageChange}
+              removeClippedSubviews={false}
+            />
+            {/* Horizontal bar */}
+            <View
+              style={{
+                height: 1,
+                width: "100%",
+                backgroundColor: t.colors.console.border,
+                marginVertical: 12,
+              }}
+            />
+            <Pressable onPress={() => console.log("ADD it!")}>
+              {/* <Ionicons name={"add"} size={20} color={"#697657"} style={styles.icon} /> */}
+              <Text
+                style={{
+                  color: t.colors.accent,
+                  paddingHorizontal: 12,
+                  textDecorationLine: "underline",
+                  fontWeight: "900",
+                }}
+              >
+                Add Workout
+              </Text>
+            </Pressable>
+
+            {/* Print your "X" variable (the selected full date) */}
+            <Text style={[styles.selectedLabel, { color: t.colors.subtext }]}>
+              Selected: {format(selectedDate, "yyyy-MM-dd")}
+            </Text>
+          </>
+        )}
+      </View>
     </Container>
-    
   );
 }
 
 const styles = StyleSheet.create({
-  box: { paddingVertical: 12, backgroundColor: "#111", borderRadius: 8 },
-  title: { color: "#fff", fontWeight: "700", textAlign: "center", marginBottom: 8 },
+  title: { fontWeight: "900", textAlign: "center", marginBottom: 8, letterSpacing: 0.6 },
 
   weekRowContainer: {},
   row: { flexDirection: "row", alignItems: "center" },
-
   slot: { alignItems: "center", justifyContent: "center" },
 
-  dayName: { color: "#bbb", fontWeight: "600", textAlign: "center" },
+  dayName: { fontWeight: "700", textAlign: "center", fontSize: 12 },
 
-  dateCell: { paddingVertical: 10, borderRadius: 8, borderWidth: 1, borderColor: "#444" },
-  dateText: { color: "#fff", fontSize: 16, fontWeight: "700" },
-
-  // only one highlight: the green selection
-  selectedCell: {
-    borderColor: "#67E8F9",
-    backgroundColor: "rgba(103,232,249,0.22)",
-  },
-  selectedText: {
-    color: "#E6FBFF",
-    fontWeight: "800",
-  },
+  dateCell: { paddingVertical: 10, borderRadius: 10, borderWidth: 1 },
+  dateText: { fontSize: 16, fontWeight: "800" },
 
   selectedLabel: {
     marginTop: 10,
     textAlign: "center",
-    color: "#9ee7ff",
-    fontWeight: "600",
+    fontWeight: "700",
   },
-  icon: {
-    position:"absolute",
-    left:20,
-    fontSize:24
-  }
 });

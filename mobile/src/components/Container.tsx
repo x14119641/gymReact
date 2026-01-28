@@ -6,60 +6,49 @@ import { useTheme } from "../theme/ThemeProvider";
 type ContainerProps = ViewProps & {
   children: ReactNode;
   variant?: "default" | "console";
+  density?: "default" | "compact";
 };
 
-export function Container({ children, style, variant = "default", ...rest }: ContainerProps) {
+export function Container({ children, style, variant = "default", density="default", ...rest }: ContainerProps) {
   const t = useTheme();
 
   const styles = useMemo(() => {
+    // "container size"
+    const pad = density ==="compact" ? 14:16;
+
     const base = {
       borderRadius: 16,
-      padding: 16,
+      padding: pad,
       marginVertical: 10,
       alignItems: "flex-start" as const,
-      gap: 6,
     };
 
-    if (variant === "console") {
-      // translucent “console” pane — no elevation on Android
-      return StyleSheet.create({
-        container: {
-          ...base,
-          backgroundColor: t.colors.console.bg,
-          borderWidth: 1,
-          borderColor: t.colors.console.border,
-          ...Platform.select({
-            ios: {
-              shadowColor: t.colors.shadow,
-              shadowOpacity: 0.15,
-              shadowRadius: 12,
-              shadowOffset: { width: 0, height: 4 },
-            },
-            android: { elevation: 0 },
-          }),
-        },
-      });
-    }
+    // Slightly different styles CArd vs "console"
+    const surfaceBg = variant === "console" ? t.colors.console.bg:t.colors.card;
+    const surfaceBorder = variant === "console" ? t.colors.console.border : t.colors.border;
 
-    // default solid card
+    // Keep shadow consistent across variants (so it's one system)
+    const shadow = Platform.select({
+      ios: {
+        shadowColor: t.colors.shadow,
+        shadowOpacity: variant === "console" ? 0.08 : 0.12,
+        shadowRadius: variant === "console" ? 8 : 10,
+        shadowOffset: { width: 0, height: variant === "console" ? 2 : 3 },
+      },
+      android: { elevation: 2 },
+    });
+
     return StyleSheet.create({
       container: {
         ...base,
-        backgroundColor: t.colors.card,
+        backgroundColor: surfaceBg,
         borderWidth: 1,
-        borderColor: t.colors.border,
-        ...Platform.select({
-          ios: {
-            shadowColor: t.colors.shadow,
-            shadowOpacity: 0.12,
-            shadowRadius: 10,
-            shadowOffset: { width: 0, height: 3 },
-          },
-          android: { elevation: 4 },
-        }),
+        borderColor: surfaceBorder,
+        ...shadow,
       },
     });
-  }, [t, variant]);
+    }, [t, variant, density]);
+
 
   return (
     <View style={[styles.container, style]} {...rest}>
