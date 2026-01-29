@@ -19,6 +19,9 @@ import {
 // import Ionicons from "@expo/vector-icons/Ionicons";
 import { Container } from "./Container";
 import { useTheme } from "../theme/ThemeProvider";
+import { useDateStore } from "../store/dateStore";
+
+
 
 function buildWeek(baseDate: Date) {
   const weekStart = startOfWeek(baseDate, { weekStartsOn: 1 }); // Monday
@@ -41,7 +44,9 @@ export default function WeekCard() {
   const [baseDate] = React.useState(new Date());
   const today = React.useRef(new Date()).current;
   const anchorDate = React.useRef(today).current; // <-- fixed weekday anchor (today -thurdsay-)
-  const [selectedDate, setSelectedDate] = React.useState<Date>(anchorDate);
+  const homeDateISO = useDateStore((s)=> s.homeDateISO);
+  const setHomeDateISO = useDateStore((s)=> s.setHomeDateISO);
+  const selectedDate = React.useMemo(()=> new Date(homeDateISO), [homeDateISO]);
 
   const prev = React.useMemo(
     () => buildWeek(subWeeks(baseDate, 1)),
@@ -88,9 +93,9 @@ export default function WeekCard() {
     requestAnimationFrame(() => {
       listRef.current?.scrollToIndex({ index: 1, animated: false });
       // ensure selection is the anchor on current page
-      setSelectedDate(anchorDate);
+      setHomeDateISO(format(anchorDate, "yyyy-MM-dd"));
     });
-  }, [pageW, anchorDate]);
+  }, [pageW, anchorDate, setHomeDateISO]);
 
   // when swipe ends, reset selection to the ANCHOR weekday on that page
   const handlePageChange = (e: any) => {
@@ -102,7 +107,7 @@ export default function WeekCard() {
 
     // new selected = anchor weekday shifted by page
     const anchorOnThisPage = addWeeks(anchorDate, clamped - 1);
-    setSelectedDate(anchorOnThisPage);
+    setHomeDateISO(format(anchorOnThisPage, "yyyy-MM-dd"));
   };
 
   const DayNames = () => (
@@ -168,7 +173,7 @@ export default function WeekCard() {
 
               {/* Tap to select (only affects current page; swipe will re-anchor) */}
               <Pressable
-                onPress={() => setSelectedDate(d)}
+                onPress={() => setHomeDateISO(format(d, "yyyy-MM-dd"))}
                 style={StyleSheet.absoluteFill}
               />
             </View>
@@ -238,7 +243,7 @@ export default function WeekCard() {
 
             {/* Print your "X" variable (the selected full date) */}
             <Text style={[styles.selectedLabel, { color: t.colors.subtext }]}>
-              Selected: {format(selectedDate, "yyyy-MM-dd")}
+              Selected: {homeDateISO}
             </Text>
           </>
         )}
