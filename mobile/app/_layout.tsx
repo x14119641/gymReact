@@ -123,7 +123,7 @@ export default function RootLayout() {
   }, [hydrated]); // IMPORTANT: only hydrated
 
   // 2) NAV GATING: choose correct group and replace only when needed
-  const currentGroup = segments[0]; // "(auth)" | "(tabs)" | "(onboarding)" | undefined
+  const currentGroup = segments[0]; // "(auth)" | "(tabs)" | "(onboarding)" | "(modelas)" | undefined
 
   const targetGroup = useMemo(() => {
     if (!bootstrapped) return null;
@@ -136,6 +136,9 @@ export default function RootLayout() {
   useEffect(() => {
     if (!hydrated || !bootstrapped) return;
     if (!targetGroup) return;
+
+    // ✅ don't hijack navigation when a modal is open
+    if (currentGroup === "(modals)") return;
 
     if (currentGroup !== targetGroup) {
       if (targetGroup === "(auth)") router.replace("/(auth)/login");
@@ -152,6 +155,7 @@ export default function RootLayout() {
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(onboarding)" />
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(modals)/calendar" options={{ presentation: "modal", headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );

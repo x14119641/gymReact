@@ -16,12 +16,11 @@ import {
   addDays,
   isSameDay,
 } from "date-fns";
-// import Ionicons from "@expo/vector-icons/Ionicons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Container } from "./Container";
 import { useTheme } from "../theme/ThemeProvider";
 import { useDateStore } from "../store/dateStore";
-
-
+import { Link, useRouter } from "expo-router";
 
 function buildWeek(baseDate: Date) {
   const weekStart = startOfWeek(baseDate, { weekStartsOn: 1 }); // Monday
@@ -30,6 +29,7 @@ function buildWeek(baseDate: Date) {
 
 export default function WeekCard() {
   const t = useTheme();
+  const router = useRouter();
   // layout / paging
   const [pageW, setPageW] = React.useState<number | null>(null);
   const [pageIndex, setPageIndex] = React.useState(1); // 0=prev,1=curr,2=next
@@ -44,9 +44,12 @@ export default function WeekCard() {
   const [baseDate] = React.useState(new Date());
   const today = React.useRef(new Date()).current;
   const anchorDate = React.useRef(today).current; // <-- fixed weekday anchor (today -thurdsay-)
-  const homeDateISO = useDateStore((s)=> s.homeDateISO);
-  const setHomeDateISO = useDateStore((s)=> s.setHomeDateISO);
-  const selectedDate = React.useMemo(()=> new Date(homeDateISO), [homeDateISO]);
+  const homeDateISO = useDateStore((s) => s.homeDateISO);
+  const setHomeDateISO = useDateStore((s) => s.setHomeDateISO);
+  const selectedDate = React.useMemo(
+    () => new Date(homeDateISO),
+    [homeDateISO],
+  );
 
   const prev = React.useMemo(
     () => buildWeek(subWeeks(baseDate, 1)),
@@ -162,12 +165,12 @@ export default function WeekCard() {
               ]}
             >
               <Text
-              style={[
-                styles.dateText,
-                { color: t.colors.text },
-                isSelected && { fontWeight: "900" },
-              ]}
-            >
+                style={[
+                  styles.dateText,
+                  { color: t.colors.text },
+                  isSelected && { fontWeight: "900" },
+                ]}
+              >
                 {format(d, "d")}
               </Text>
 
@@ -192,9 +195,27 @@ export default function WeekCard() {
           </Text>
         ) : (
           <>
-            <Text style={[styles.title, { color: t.colors.text }]}>
-              Week: {weekNumber}
-            </Text>
+            <View style={styles.headerRow}>
+              {/* empty space in order to week be in the center */}
+              <View style={styles.headerSpacer} />
+              <Text
+                style={[styles.headerCentered, { color: t.colors.text }]}
+                numberOfLines={1}
+              >
+                Week: {weekNumber}
+              </Text>
+
+              <Link href="/(modals)/calendar" asChild>
+                <Pressable style={styles.headerAction} hitSlop={20}>
+                  <Ionicons
+                    name="calendar-outline"
+                    size={20}
+                    color={t.colors.text}
+                  />
+                </Pressable>
+              </Link>
+            </View>
+
             <DayNames />
 
             <FlatList
@@ -253,7 +274,37 @@ export default function WeekCard() {
 }
 
 const styles = StyleSheet.create({
-  title: { fontWeight: "900", textAlign: "center", marginBottom: 8, letterSpacing: 0.6 },
+  title: {
+    fontWeight: "900",
+    textAlign: "center",
+    marginBottom: 8,
+    letterSpacing: 0.6,
+  },
+
+  headerRow: {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  marginBottom: 10,
+},
+
+headerSpacer: {
+  width: 36, // MUST match headerAction touch width
+},
+
+headerCentered: {
+  flex: 1,
+  textAlign: "center",
+  fontSize: 12,
+  fontWeight: "900",
+  letterSpacing: 0.8,
+},
+
+headerAction: {
+  width: 36,
+  alignItems: "center",
+  justifyContent: "center",
+},
 
   weekRowContainer: {},
   row: { flexDirection: "row", alignItems: "center" },
