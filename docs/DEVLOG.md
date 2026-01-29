@@ -1,5 +1,24 @@
 # Dev Log
 
+## 2026-01-29
+- Calendar Modal
+  - Created icon in weekdays to open Calendar
+  - Created Calendar modal, works ok. Uses mock data.
+
+- Next:
+  - Start the Add Workout flow
+    - User adds a workout via the WeekDays button
+    - A workout session appears under WeekDays as a card / row
+    - Support multiple sessions per day (2–3 workouts)
+- Polish Profile
+  - Include settings and plan
+  - Define clean structure for both
+- No back end work (fronend-only focus)
+  
+- Known Bug
+  - When opening the app, app shows login page, loading and then enters to home page due refreshToken. 
+
+
 ## 2026-01-28
 - NAvigation / App structure
   - Simplified bottom tav navigation to Home / Worjout / Progress / Profile
