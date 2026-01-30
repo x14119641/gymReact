@@ -3,7 +3,7 @@ import { View, Text, Pressable, StyleSheet } from "react-native";
 import type { SportBackground } from "../../model/types";
 
 const OPTIONS: { label: string; value: SportBackground }[] = [
-  { label: "Athletism", value: "athletism" },
+  { label: "Athletics", value: "athletics" },
   { label: "Wheights", value: "weights" },
   { label: "Calisthenics", value: "calisthenics" },
   { label: "Swimming", value: "swimming" },

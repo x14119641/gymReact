@@ -32,7 +32,7 @@ export type InjuryArea =
 
 export type SportBackground =
   | "weights"
-  | "athletism"
+  | "athletics"
   | "cycling"
   | "calisthenics"
   | "running"
@@ -49,21 +49,19 @@ export type DaysPerWeek = "2" | "3" | "4" | "5_plus";
 
 export type OnboardingAnswers = {
   goal: Goal | null;
-  days_per_week: DaysPerWeek | null;
-
-  experience_level: ExperienceLevel | null;
-  equipment_access: EquipmentAccess[];
+  daysPerWeek: DaysPerWeek | null;
+  experienceLevel: ExperienceLevel | null;
+  equipmentAccess: EquipmentAccess[];
   injuries: InjuryArea[];
-  sports_background: SportBackground[];
-  session_length: SessionLength | null;
+  sportsBackground: SportBackground[];
+  sessionLength: SessionLength | null;
 };
-
 export const DEFAULT_ONBOARDING_ANSWERS: OnboardingAnswers = {
   goal: null,
-  days_per_week: null,
-  experience_level: null,
-  equipment_access: [],
+  daysPerWeek: null,
+  experienceLevel: null,
+  equipmentAccess: [],
   injuries: [],
-  sports_background: [],
-  session_length: null,
+  sportsBackground: [],
+  sessionLength: null,
 };
