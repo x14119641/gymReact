@@ -20,7 +20,7 @@ export function Container({ children, style, variant = "default", density="defau
       borderRadius: 16,
       padding: pad,
       marginVertical: 10,
-      alignItems: "flex-start" as const,
+      alignItems: "stretch" as const,
     };
 
     // Slightly different styles CArd vs "console"
