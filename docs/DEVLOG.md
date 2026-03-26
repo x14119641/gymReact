@@ -1,5 +1,22 @@
 # Dev Log
 
+## 2026-03-26
+- Created Profile Page and added a "SettignsRow" Component where data is shown.
+  - Defined clean structure for Settings
+  - 
+- Next:
+  - Start the Add Workout flow
+    - User adds a workout via the WeekDays button
+    - A workout session appears under WeekDays as a card / row
+    - Support multiple sessions per day (2–3 workouts)
+- Polish Profile
+  - Include settings and plan
+  
+- Known Bug
+  - When opening the app, app shows login page, loading and then enters to home page due refreshToken.
+  - App still loading even if refresh token did expire.
+
+
 ## 2026-01-29
 - Calendar Modal
   - Created icon in weekdays to open Calendar
