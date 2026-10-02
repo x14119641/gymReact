@@ -3,7 +3,15 @@ import type { OnboardingAnswers } from "../features/onboarding/model/types";
 
 
 export async function submitOnboarding(payload:OnboardingAnswers) {
-    const r = await api.post("/profile/onboarding", payload);
+    const r = await api.post("/profile/onboarding", {
+        goal: payload.goal,
+        days_per_week: payload.daysPerWeek,
+        experience_level: payload.experienceLevel,
+        equipment_access: payload.equipmentAccess,
+        session_length: payload.sessionLength,
+        injuries: payload.injuries,
+        sports_background: payload.sportsBackground,
+    });
     return r.data;
 }
 

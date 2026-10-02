@@ -38,23 +38,17 @@ async def onboarding_page(
     profile.injuries = body.injuries
     profile.sports_background = body.sports_background
 
-    # I know 'injuries' and 'sports background' are optional, may be empty
-    # If they have info then i store the date
+    # Optional injuries and sports background may be empty.
     required_ok = (
         body.goal
         and body.days_per_week
         and body.experience_level
+        and body.session_length
         and isinstance(body.equipment_access, list)
         and len(body.equipment_access) > 0
     )
 
-    optional_ok = (
-        isinstance(body.injuries, list)
-        and len(body.injuries) > 0
-        and isinstance(body.sports_background, list)
-        and len(body.sports_background) > 0
-    )
-    if required_ok and optional_ok and profile.onboarding_completed_at is None:
+    if required_ok and profile.onboarding_completed_at is None:
         profile.onboarding_completed_at = now
 
     await db.commit()

@@ -82,7 +82,7 @@ export default function RootLayout() {
             );
 
             const newAccess = r.data?.access_token;
-            const newRefresh = r.data?.refresh_token ?? null;
+            const newRefresh = r.data?.refresh_token ?? refreshToken;
 
             if (!newAccess)
               throw new Error("No access_token in refresh response");
