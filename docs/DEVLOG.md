@@ -1,6 +1,46 @@
 # Dev Log
 
 ## 2026-03-26
+- Reviewed and stabilized auth/onboarding edge cases
+  - Fixed onboarding payload mismatch between frontend camelCase fields and backend snake_case schema
+  - Fixed startup refresh flow accidentally discarding the existing refresh token when the backend returns only a new access token
+  - Verified refresh-token preservation
+
+- Fixed onboarding completion metadata
+ - onboarding_completed_at is now set when all required onboarding fields are completed
+ - Optional injuries and sports_background can be empty without preventing onboarding completion
+ - Added session_length to the completion condition
+ - Existing completion timestamps are preserved
+ - Added focused backend tests: 23 profile tests passing
+
+- Manually verified:
+ - Existing user without user_profiles record → Onboarding
+ - New user can complete onboarding while skipping optional fields
+ - Successful onboarding creates/updates profile and sets onboarding_completed_at
+ - Completed user → Home
+ - Token/session restoration still works
+
+- Architecture / behavior confirmed:
+ - Current routing uses profile existence (missing / ready) to decide between Onboarding and Home
+ - onboarding_completed_at is not currently used as the routing gate
+ - Old profiles with onboarding_completed_at = NULL may still enter Home because historical NULL values are ambiguous
+ - No backfill performed for old profile records
+
+- Known UX issue:
+ - On app reload, Login may briefly render before the authenticated app
+ - Confirmed as a routing/render timing issue rather than a failed refresh
+ - Deferred because authentication/session restoration works correctly
+
+- Next:
+ - Freeze auth/onboarding work unless a new functional bug appears
+ - Continue Profile UI / settings
+ - Start Add Workout flow
+ - Add workout from WeekDays
+ - Display workout sessions below WeekDays
+ - Support multiple sessions per day
+ - Later: decide whether onboarding_completed_at / onboarding_completed should become the routing source of truth
+
+## 2026-03-26
 - Created Profile Page and added a "SettignsRow" Component where data is shown.
   - Defined clean structure for Settings
   - 
