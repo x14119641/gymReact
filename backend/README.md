@@ -22,6 +22,8 @@ Note: Docker env in `backend/docker/` is not working well so i had them in the m
 ## Run backend
 ```bash
 PYTHONPATH=src uvicorn app.main:app --reload
+
+poetry run uvicorn app.main:app --reload
 ```
 
 ## Keep up with Models and migrations (Very Important!)
