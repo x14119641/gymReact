@@ -6,8 +6,8 @@ export function BaseLayout({children}:{children:React.ReactNode}) {
     const t = useTheme();
 
     return (
-        <SafeAreaView style={[s.safe, {backgroundColor:t.colors.bg}]}>
-            <View style={[s.container, {backgroundColor:t.colors.bg}]}>
+        <SafeAreaView style={[s.safe, {backgroundColor:t.colors.background}]}>
+            <View style={[s.container, {backgroundColor:t.colors.background}]}>
                 {children}
             </View>
         </SafeAreaView>

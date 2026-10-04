@@ -11,12 +11,12 @@ export default function RootTabs() {
         headerShown: false,
 
         tabBarStyle: {
-          backgroundColor: t.colors.card,
+          backgroundColor: t.colors.surface,
           borderTopColor: t.colors.border,
         },
 
-        tabBarActiveTintColor: t.colors.accent,
-        tabBarInactiveTintColor: t.colors.subtext,
+        tabBarActiveTintColor: t.colors.primary,
+        tabBarInactiveTintColor: t.colors.textMuted,
       }}
     >
       {/* Home */}

@@ -66,7 +66,7 @@ export default function CalendarModal() {
   const sessions = MOCK_SESSIONS[browseISO] ?? [];
 
   return (
-    <View style={[styles.screen, { backgroundColor: t.colors.bg }]}>
+    <View style={[styles.screen, { backgroundColor: t.colors.background }]}>
       <Container
         variant="default"
         density="compact"
@@ -77,8 +77,8 @@ export default function CalendarModal() {
           style={[
             styles.headerPill,
             {
-              borderColor: t.colors.console.border,
-              backgroundColor: t.colors.console.chipBg,
+              borderColor: t.colors.border,
+              backgroundColor: t.colors.surfaceSecondary,
             },
           ]}
         >
@@ -95,7 +95,7 @@ export default function CalendarModal() {
           <View
             style={[
               styles.pillDivider,
-              { backgroundColor: t.colors.console.border },
+              { backgroundColor: t.colors.border },
             ]}
           />
 
@@ -108,7 +108,7 @@ export default function CalendarModal() {
           <View
             style={[
               styles.pillDivider,
-              { backgroundColor: t.colors.console.border },
+              { backgroundColor: t.colors.border },
             ]}
           />
 
@@ -127,7 +127,7 @@ export default function CalendarModal() {
         {/* Day names */}
         <View style={styles.dowRow}>
           {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
-            <Text key={d} style={[styles.dow, { color: t.colors.subtext }]}>
+            <Text key={d} style={[styles.dow, { color: t.colors.textMuted }]}>
               {d}
             </Text>
           ))}
@@ -149,10 +149,10 @@ export default function CalendarModal() {
                   styles.cell,
                   {
                     borderColor: isActive
-                      ? t.colors.accent
-                      : t.colors.console.border,
+                      ? t.colors.primary
+                      : t.colors.border,
                     backgroundColor: isActive
-                      ? t.colors.console.chipBg
+                      ? t.colors.surfaceSecondary
                       : "transparent",
                     opacity: isMonth ? 1 : 0.35,
                   },
@@ -168,9 +168,9 @@ export default function CalendarModal() {
                     style={[
                       styles.dotBottom,
                       {
-                        backgroundColor: t.colors.accent,
+                        backgroundColor: t.colors.primary,
                         borderColor: isActive
-                          ? t.colors.console.chipBg
+                          ? t.colors.surfaceSecondary
                           : "transparent",
                       },
                     ]}
@@ -183,11 +183,11 @@ export default function CalendarModal() {
 
         {/* Dvider */}
         <View
-          style={[styles.hRule, { backgroundColor: t.colors.console.border }]}
+          style={[styles.hRule, { backgroundColor: t.colors.border }]}
         />
 
         {/* Sessions */}
-        <Text style={[styles.sectionTitle, { color: t.colors.subtext }]}>
+        <Text style={[styles.sectionTitle, { color: t.colors.textMuted }]}>
           Session {browseISO}
         </Text>
 
@@ -196,7 +196,7 @@ export default function CalendarModal() {
           showsVerticalScrollIndicator={false}
         >
           {sessions.length === 0 ? (
-            <Text style={{ color: t.colors.subtext, paddingVertical: 10 }}>
+            <Text style={{ color: t.colors.textMuted, paddingVertical: 10 }}>
               No session logged.
             </Text>
           ) : (
@@ -206,15 +206,15 @@ export default function CalendarModal() {
                 style={[
                   styles.sessionRow,
                   {
-                    borderColor: t.colors.console.border,
-                    backgroundColor: t.colors.console.chipBg,
+                    borderColor: t.colors.border,
+                    backgroundColor: t.colors.surfaceSecondary,
                   },
                 ]}
               >
                 <Text style={{ color: t.colors.text, fontWeight: "900" }}>
                   {s.title}
                 </Text>
-                <Text style={{ color: t.colors.subtext, fontWeight: "800" }}>
+                <Text style={{ color: t.colors.textMuted, fontWeight: "800" }}>
                   {s.time ?? ""}
                 </Text>
               </View>
@@ -229,8 +229,8 @@ export default function CalendarModal() {
             style={[
               styles.closeBtn,
               {
-                backgroundColor: t.colors.console.chipBg,
-                borderColor: t.colors.console.border,
+                backgroundColor: t.colors.surfaceSecondary,
+                borderColor: t.colors.border,
               },
             ]}
           >

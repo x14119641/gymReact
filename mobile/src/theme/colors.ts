@@ -1,89 +1,105 @@
-// src/theme/colors.ts
-import { palette } from "./palette";
+export type SemanticThemeColors = {
+  background: string;
+  surface: string;
+  surfaceSecondary: string;
 
-export type ThemeColors = {
-  bg: string;
-  card: string;
   text: string;
-  subtext: string;
-  title: string;
+  textMuted: string;
+
+  primary: string;
+  primaryPressed: string;
+  onPrimary: string;
+
   border: string;
-  accent: string;
+  borderStrong: string;
+
   success: string;
   warning: string;
-  error: string;
-  link: string;
-  overlay: string;
-  modal: string;
+  danger: string;
+
+  highlight: string;
+  onHighlight: string;
+
   shadow: string;
-  console: {
-    bg: string;
-    border: string;
-    chipBg: string;
-    chipBorder: string;
-    prompt: string; // "$ status"
-    value: string; // info values
-    note: string; // notices
-  };
 };
-export const lightColors: ThemeColors = {
-  bg: "#F0EEE9", // Cloud Dancer-ish :contentReference[oaicite:2]{index=2}
-  card: "#FFFFFF",
-  text: "#102A43",
-  subtext: "#486581",
-  title: "#102A43",
-  border: "rgba(16, 42, 67, 0.18)",
 
-  accent: "#0077B6",
-  success: "#2A9D8F",
-  warning: "#F4A261",
-  error: "#E63946",
-  link: "#2563EB",
+// Migration debt: remove each legacy role after its last consumer migrates.
+type LegacyThemeColors = {
+  /** @deprecated Use background. */
+  bg: string;
+  /** @deprecated Use surface. */
+  card: string;
+  /** @deprecated Use textMuted. */
+  subtext: string;
+  /** @deprecated Use primary. */
+  accent: string;
+  /** @deprecated Use danger. */
+  error: string;
+};
 
-  overlay: "rgba(0,0,0,0.06)",
-  modal: "#FFFFFF",
+export type ThemeColors = SemanticThemeColors & LegacyThemeColors;
+
+// Provisional palette, not finalized branding. Adjust semantic values here.
+const lightSemanticColors: SemanticThemeColors = {
+  background: "#F4F6F4",
+  surface: "#FFFFFF",
+  surfaceSecondary: "#EDF2EE",
+
+  text: "#1C2A1C",
+  textMuted: "#526457",
+
+  primary: "#007C41",
+  primaryPressed: "#006333",
+  onPrimary: "#FFFFFF",
+
+  border: "#CBD5CD",
+  borderStrong: "#7B8A7F",
+
+  success: "#3E6A3D",
+  warning: "#8A5700",
+  danger: "#B42332",
+
+  highlight: "#ADFF2F",
+  onHighlight: "#1C2A1C",
+
   shadow: "rgba(0,0,0,0.18)",
-
-  console: {
-    bg: "#F7F6F2", // solid “paper tint” (not transparent)
-    border: "rgba(16, 42, 67, 0.14)",
-    chipBg: "rgba(0, 119, 182, 0.10)",
-    chipBorder: "rgba(0, 119, 182, 0.28)",
-    prompt: "#0077B6",
-    value: "#00A896",
-    note: "#F4A261",
-  },
 };
 
-export const darkColors: ThemeColors = {
-  // Base
-  bg: "#0B1E2D", // deep blue-black
-  card: "#101820", // solid dark card
-  text: "#CFE9F5", // misty cyan-white
-  subtext: "rgba(207, 233, 245, 0.75)",
-  title: "#102A43",
-  border: "rgba(0, 180, 150, 0.28)",
+const darkSemanticColors: SemanticThemeColors = {
+  background: "#0C1310",
+  surface: "#151F19",
+  surfaceSecondary: "#202E25",
 
-  // Accents
-  accent: "#7FDBFF", // soft cyan pop
-  success: "#2ECF9A",
-  warning: "#FFD084",
-  error: "#FF6B6B",
-  link: "#7AB6FF",
+  text: "#E8F0EA",
+  textMuted: "#A7B8AA",
 
-  // Effects
-  overlay: "rgba(255,255,255,0.06)",
-  modal: "rgba(255,255,255,0.04)",
+  primary: "#4ADE80",
+  primaryPressed: "#22C55E",
+  onPrimary: "#0C1310",
+
+  border: "#34463A",
+  borderStrong: "#617D69",
+
+  success: "#8DCB8B",
+  warning: "#F2C166",
+  danger: "#FF8A94",
+
+  highlight: "#ADFF2F",
+  onHighlight: "#1C2A1C",
+
   shadow: "rgba(0,0,0,0.6)",
-
-  // Console surface (dark)
-  console: {
-    bg: "rgba(8, 12, 20, 0.55)", // smoky glass
-    border: "rgba(0, 180, 150, 0.28)",
-    chipBg: "rgba(0, 231, 179, 0.10)",
-    chipBorder: "rgba(0, 231, 179, 0.35)",
-    prompt: "#7FFF7F",
-    value: "#00BFFF",
-    note: "#FFD084",
-  },
 };
+
+function withLegacyColors(colors: SemanticThemeColors): ThemeColors {
+  return {
+    ...colors,
+    bg: colors.background,
+    card: colors.surface,
+    subtext: colors.textMuted,
+    accent: colors.primary,
+    error: colors.danger,
+  };
+}
+
+export const lightColors: ThemeColors = withLegacyColors(lightSemanticColors);
+export const darkColors: ThemeColors = withLegacyColors(darkSemanticColors);

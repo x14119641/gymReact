@@ -14,37 +14,68 @@ import { useTheme } from "@/src/theme/ThemeProvider";
 import { useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Container } from "@/src/components/Container";
+import { useAuth } from "@/src/store/auth";
 
 export default function ProfileScreen() {
   //   Mock data
   const t = useTheme();
   const route = useRouter();
-  const [theme, setTheme] = useState(mockProfile.settings.theme);
   const [weightUnit, setWeightUnit] = useState(mockProfile.settings.weightUnit);
 
-  const [darkMode, setDarkMode] = useState(theme === "dark");
+  const logout = useAuth((s) => s.logout);
 
   return (
-    <ScrollView style={{ backgroundColor: t.colors.bg, flex: 1, marginHorizontal:12}}>
-      <Text style={[s.title, { color: t.colors.title }]}>Profile</Text>
-      <Container variant="default" density="compact">
-        <Text style={[s.subtitle, {color:t.colors.accent}]}>
-          Account
-        </Text>
-        <SettingRow
-          icon="mail-outline"
-          label="Email"
-          value={mockProfile.user.email}
-        />
-        <SettingRow
-          icon="person-outline"
-          label="Username"
-          value={mockProfile.user.username}
-        />
-      </Container>
-      
-      <Text style={s.hint}>Mock only. No backend calls.</Text>
-    </ScrollView>
+    <View style={{ flex: 1, backgroundColor: t.colors.background }}>
+      <ScrollView
+        style={{ backgroundColor: t.colors.background, flex: 1, marginHorizontal: 12 }}
+      >
+        <Text style={[s.title, { color: t.colors.text }]}>Profile</Text>
+        <Container variant="default" density="compact">
+          <Text style={[s.subtitle, { color: t.colors.text }]}>Account</Text>
+          <SettingRow
+            icon="mail-outline"
+            label="Email"
+            value={mockProfile.user.email}
+          />
+          <SettingRow
+            icon="person-outline"
+            label="Username"
+            value={mockProfile.user.username}
+          />
+        </Container>
+
+        <Container variant="default" density="compact">
+          <SettingRow
+            icon="moon-outline"
+            label="Dark Mode"
+            right={
+              <Switch
+                accessibilityLabel="Dark Mode"
+                value={t.scheme === "dark"}
+                onValueChange={(enabled) => t.setMode(enabled ? "dark" : "light")}
+                trackColor={{ false: t.colors.borderStrong, true: t.colors.primary }}
+                thumbColor={t.colors.surface}
+                ios_backgroundColor={t.colors.borderStrong}
+              />
+            }
+          />
+        </Container>
+
+        <Text style={[s.hint, { color: t.colors.textMuted }]}>Mock only. No backend calls.</Text>
+
+        <Pressable
+          style={({ pressed }) => [
+            s.logoutBtn,
+            { backgroundColor: t.colors.surface, borderColor: t.colors.border },
+            pressed && s.pressed,
+          ]}
+          onPress={logout}
+        >
+          <Ionicons name="log-out-outline" size={20} color={t.colors.danger} />
+          <Text style={[s.logoutText, { color: t.colors.danger }]}>Logout</Text>
+        </Pressable>
+      </ScrollView>
+    </View>
   );
 }
 
@@ -52,8 +83,13 @@ const s = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#0B0F14" },
   container: { padding: 16, paddingBottom: 32 },
 
-  title: { fontSize: 28, fontWeight: "800" , marginTop:16, textAlign:"center"},
-  subtitle: { textAlign:"center", fontSize:16, fontWeight:"700" },
+  title: {
+    fontSize: 28,
+    fontWeight: "800",
+    marginTop: 16,
+    textAlign: "center",
+  },
+  subtitle: { textAlign: "center", fontSize: 16, fontWeight: "700" },
 
   section: {
     marginTop: 18,
@@ -74,17 +110,11 @@ const s = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#3B1E1E",
-    backgroundColor: "#160B0B",
     marginTop: 6,
   },
-  logoutIcon: { color: "#FF6B6B" },
-  logoutText: { color: "#FF6B6B", fontWeight: "900" },
+  logoutText: { fontWeight: "900" },
 
   pressed: { opacity: 0.75 },
 
-  hint: { marginTop: 12, color: "#6E8193", fontSize: 12, textAlign: "center" },
+  hint: { marginTop: 12, fontSize: 12, textAlign: "center" },
 });
-
-
-

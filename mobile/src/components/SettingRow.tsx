@@ -18,14 +18,14 @@ export function SettingRow({
     const content = (
         <View style={s.row}>
             <View style={s.left}>
-                <Ionicons name={icon} size={18} style={{color:danger ? t.colors.error:t.colors.accent}} />
-                <Text style={[s.label, {color:danger ? t.colors.error:t.colors.accent}]}>{label}</Text>
+                <Ionicons name={icon} size={18} style={{color:danger ? t.colors.danger:t.colors.textMuted}} />
+                <Text style={[s.label, {color:danger ? t.colors.danger:t.colors.text}]}>{label}</Text>
             </View>
 
             <View style={s.right}>
-                {value ? <Text style={[s.value,{color:value ? t.colors.subtext : t.colors.error}]}>{value}</Text> :null}
+                {value ? <Text style={[s.value,{color:t.colors.textMuted}]}>{value}</Text> :null}
                 {right ?? null}
-                {onPress ? <Ionicons name="chevron-forward" size={18} style={{color:value ? t.colors.accent : t.colors.error}} />:null}
+                {onPress ? <Ionicons name="chevron-forward" size={18} style={{color:danger ? t.colors.danger : t.colors.textMuted}} />:null}
             </View>
         </View>
     );

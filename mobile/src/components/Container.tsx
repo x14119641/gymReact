@@ -5,7 +5,8 @@ import { useTheme } from "../theme/ThemeProvider";
 
 type ContainerProps = ViewProps & {
   children: ReactNode;
-  variant?: "default" | "console";
+  // Keep existing default-variant callers compatible.
+  variant?: "default";
   density?: "default" | "compact";
 };
 
@@ -23,17 +24,12 @@ export function Container({ children, style, variant = "default", density="defau
       alignItems: "stretch" as const,
     };
 
-    // Slightly different styles CArd vs "console"
-    const surfaceBg = variant === "console" ? t.colors.console.bg:t.colors.card;
-    const surfaceBorder = variant === "console" ? t.colors.console.border : t.colors.border;
-
-    // Keep shadow consistent across variants (so it's one system)
     const shadow = Platform.select({
       ios: {
         shadowColor: t.colors.shadow,
-        shadowOpacity: variant === "console" ? 0.08 : 0.12,
-        shadowRadius: variant === "console" ? 8 : 10,
-        shadowOffset: { width: 0, height: variant === "console" ? 2 : 3 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 3 },
       },
       android: { elevation: 2 },
     });
@@ -41,13 +37,13 @@ export function Container({ children, style, variant = "default", density="defau
     return StyleSheet.create({
       container: {
         ...base,
-        backgroundColor: surfaceBg,
+        backgroundColor: t.colors.surface,
         borderWidth: 1,
-        borderColor: surfaceBorder,
+        borderColor: t.colors.border,
         ...shadow,
       },
     });
-    }, [t, variant, density]);
+    }, [t, density]);
 
 
   return (

@@ -8,10 +8,10 @@ export function Card({ children }: { children: React.ReactNode }) {
     <View
       style={[
         styles.card,
-        { backgroundColor: t.colors.card, borderColor: t.colors.border },
+        { backgroundColor: t.colors.surface, borderColor: t.colors.border },
       ]}
     >
-        <Text style={[styles.title, {color:t.colors.accent}]}>Example</Text>
+        <Text style={[styles.title, {color:t.colors.text}]}>Example</Text>
       {children}
     </View>
   );

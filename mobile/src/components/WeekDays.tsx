@@ -127,7 +127,7 @@ export default function WeekCard() {
               },
             ]}
           >
-            <Text style={[styles.dayName, { color: t.colors.subtext }]}>
+            <Text style={[styles.dayName, { color: t.colors.textMuted }]}>
               {d}
             </Text>
           </View>
@@ -156,10 +156,10 @@ export default function WeekCard() {
                   width: i === COLS - 1 ? lastCellW : cellW,
                   marginRight: i < COLS - 1 ? GAP : 0,
                   borderColor: isSelected
-                    ? t.colors.accent
-                    : t.colors.console.border,
+                    ? t.colors.primary
+                    : t.colors.border,
                   backgroundColor: isSelected
-                    ? t.colors.console.chipBg
+                    ? t.colors.surfaceSecondary
                     : "transparent",
                 },
               ]}
@@ -190,7 +190,7 @@ export default function WeekCard() {
     <Container variant="default" density="compact">
       <View style={{ width: "100%" }} onLayout={onLayoutBox}>
         {!pageW ? (
-          <Text style={[styles.title, { color: t.colors.subtext }]}>
+          <Text style={[styles.title, { color: t.colors.textMuted }]}>
             Loading…
           </Text>
         ) : (
@@ -244,7 +244,7 @@ export default function WeekCard() {
               style={{
                 height: 1,
                 width: "100%",
-                backgroundColor: t.colors.console.border,
+                backgroundColor: t.colors.border,
                 marginVertical: 12,
               }}
             />
@@ -252,7 +252,7 @@ export default function WeekCard() {
               {/* <Ionicons name={"add"} size={20} color={"#697657"} style={styles.icon} /> */}
               <Text
                 style={{
-                  color: t.colors.accent,
+                  color: t.colors.primary,
                   paddingHorizontal: 12,
                   textDecorationLine: "underline",
                   fontWeight: "900",
@@ -263,7 +263,7 @@ export default function WeekCard() {
             </Pressable>
 
             {/* Print your "X" variable (the selected full date) */}
-            <Text style={[styles.selectedLabel, { color: t.colors.subtext }]}>
+            <Text style={[styles.selectedLabel, { color: t.colors.textMuted }]}>
               Selected: {homeDateISO}
             </Text>
           </>

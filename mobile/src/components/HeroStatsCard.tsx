@@ -31,7 +31,7 @@ export default function HeroStatsCard({
       ? t.colors.success
       : fatigueLevel === "yellow"
       ? t.colors.warning
-      : t.colors.error;
+      : t.colors.danger;
 
   // const fatigueLabel =
   //   fatigueLevel === "green" ? "GREEN" : fatigueLevel === "yellow" ? "YELLOW" : "RED";
@@ -61,7 +61,7 @@ export default function HeroStatsCard({
         {/* Stats row */}
         <View style={s.statsRow}>
           <View style={{ flex: 1, marginRight:12 }}>
-            <Text style={[s.label, { color: t.colors.subtext }]}>STRENGTH</Text>
+            <Text style={[s.label, { color: t.colors.textMuted }]}>STRENGTH</Text>
             <Text style={[s.bigText, { color: t.colors.text }]}>{strengthScore}</Text>
           </View>
 
@@ -69,7 +69,7 @@ export default function HeroStatsCard({
           <View style={[s.vRule, { backgroundColor: t.colors.border }]} />
 
           <View style={{ flex: 1, marginLeft:12 }}>
-            <Text style={[s.label, { color: t.colors.subtext }]}>MOMENTUM</Text>
+            <Text style={[s.label, { color: t.colors.textMuted }]}>MOMENTUM</Text>
             <Text style={[s.midText, { color: t.colors.text }]}>{momentumLine}</Text>
           </View>
         </View>
@@ -78,7 +78,7 @@ export default function HeroStatsCard({
         <View style={[s.hRule, { backgroundColor: t.colors.border }]} />
 
         {/* Coach note */}
-        <Text style={[s.label, { color: t.colors.subtext }]}>COACH NOTE</Text>
+        <Text style={[s.label, { color: t.colors.textMuted }]}>COACH NOTE</Text>
         <Text style={[s.note, { color: t.colors.text }]} numberOfLines={2}>
           {coachNote}
         </Text>
