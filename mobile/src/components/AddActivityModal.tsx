@@ -5,8 +5,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 type Props = {
   visible: boolean;
   onClose: () => void;
+  onFreestylePress: () => void;
 };
-export function AddActivityModal({ visible, onClose }: Props) {
+export function AddActivityModal({
+  visible,
+  onClose,
+  onFreestylePress,
+}: Props) {
   const t = useTheme();
   const today = new Date();
 
@@ -40,6 +45,7 @@ export function AddActivityModal({ visible, onClose }: Props) {
           <View style={styles.options}>
             {/* Freestyle workout */}
             <Pressable
+              onPress={onFreestylePress}
               style={[
                 styles.optionRow,
                 {
@@ -248,7 +254,7 @@ const styles = StyleSheet.create({
   options: {
     gap: 10,
   },
-  
+
   date: {
     fontSize: 13,
   },

@@ -36,7 +36,7 @@ export default function RootTabs() {
 
       {/* Workout */}
       <Tabs.Screen
-        name="workout/index"
+        name="workout"
         options={{
           title: "Workout",
           tabBarIcon: ({ color, focused }) => (

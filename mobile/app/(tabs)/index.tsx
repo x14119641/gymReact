@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { Pressable, Text, StyleSheet } from "react-native";
 import { BaseLayout } from "@/src/components/BaseLayout";
@@ -10,6 +11,7 @@ import { AddActivityModal } from "@/src/components/AddActivityModal";
 
 export default function HomeScreen() {
   const t = useTheme();
+  const router = useRouter();
   const accessToken = useAuth((s) => s.accessToken);
   const user = useAuth((s) => s.user);
   const status = userProfileRecord((s) => s.status);
@@ -69,6 +71,10 @@ export default function HomeScreen() {
       <AddActivityModal
         visible={addMenuVisible}
         onClose={() => setAddMenuVisible(false)}
+        onFreestylePress={() => {
+          setAddMenuVisible(false);
+          router.push("/workout/freestyle");
+        }}
       />
     </BaseLayout>
   );
