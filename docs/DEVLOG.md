@@ -1,6 +1,81 @@
 # Dev Log
 
-## 2026-03-26
+## 2026-10-05
+
+- Refactored frontend theme architecture
+  - Kept the existing ThemeProvider / useTheme architecture
+  - Introduced semantic light/dark theme tokens:
+    - background / surfaces
+    - text / muted text
+    - primary interaction colors
+    - borders
+    - success / warning / danger
+    - highlight colors
+  - Removed the unused legacy palette.ts
+  - Removed the old experimental console theme after migrating its active consumers
+  - Kept temporary compatibility aliases where Login/Register still depend on them
+
+- Migrated shared UI components to semantic theme colors
+  - BaseLayout
+  - Container
+  - Card
+  - HeroStatsCard
+  - SettingRow
+  - WeekDays
+  - Bottom tab navigation
+  - Calendar
+  - Profile
+
+- Updated selected date styling
+  - Removed old cyan / console-style selected states
+  - WeekDays and Calendar now use the same semantic treatment:
+    - surfaceSecondary fill
+    - primary border
+    - text foreground
+  - Preserved all existing date selection and navigation behavior
+
+- Added functional Dark Mode toggle to Profile
+  - Uses the existing ThemeProvider directly
+  - Switches between light and dark modes immediately
+  - No additional Zustand store or context
+  - No persistence yet; theme selection is session-only
+  - Existing system-theme support remains available in ThemeProvider
+
+- Updated Profile theme styling
+  - Migrated remaining active Profile colors to semantic tokens
+  - Restyled Logout from a large dark/red button to a neutral surface with danger-colored text/icon
+  - Fixed dark-mode white borders around Profile caused by ScrollView margins exposing React Navigation's default background
+  - Added a themed full-size wrapper without changing Profile layout
+
+- Manually verified in emulator:
+  - Light theme
+  - Dark theme
+  - Theme switching
+  - Home
+  - Profile
+  - WeekDays
+  - Bottom navigation
+  - Selected dates no longer use the old cyan styling
+  - Dark Profile background renders correctly
+
+- Validation:
+  - Theme changes introduced no new TypeScript errors
+  - ESLint checks passed for migrated files
+  - git diff --check passed
+  - 38 pre-existing TypeScript errors remain:
+    - 33 in app-example
+    - 5 in OnboardingReview.tsx
+
+- Next:
+  - Fix the 5 active OnboardingReview.tsx TypeScript errors
+  - Decide whether app-example should be removed/excluded rather than fixing unused starter code
+  - Freeze theme/foundation work
+  - Start Add Workout flow
+    - Add workout from WeekDays
+    - Display workout sessions below WeekDays
+    - Support multiple sessions per day
+    - 
+## 2026-10-02
 - Reviewed and stabilized auth/onboarding edge cases
   - Fixed onboarding payload mismatch between frontend camelCase fields and backend snake_case schema
   - Fixed startup refresh flow accidentally discarding the existing refresh token when the backend returns only a new access token
