@@ -6,17 +6,17 @@ function prettyLabel(key: keyof OnboardingAnswers) {
   switch (key) {
     case "goal":
       return "Goal";
-    case "days_per_week":
+    case "daysPerWeek":
       return "Days / week";
-    case "experience_level":
+    case "experienceLevel":
       return "Experience";
-    case "equipment_access":
+    case "equipmentAccess":
       return "Equipment";
     case "injuries":
       return "Injuries";
-    case "sports_background":
+    case "sportsBackground":
       return "Sports";
-    case "session_length":
+    case "sessionLength":
       return "Session length";
     default:
       return key;
