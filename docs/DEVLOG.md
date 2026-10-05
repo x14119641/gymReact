@@ -58,22 +58,78 @@
   - Selected dates no longer use the old cyan styling
   - Dark Profile background renders correctly
 
-- Validation:
-  - Theme changes introduced no new TypeScript errors
-  - ESLint checks passed for migrated files
+- Validation / TypeScript cleanup
+  - Fixed the 5 active TypeScript errors in OnboardingReview.tsx
+    - Updated stale snake_case field references to the current camelCase onboarding model
+    - No onboarding types or behavior were changed
+  - Excluded the archived app-example Expo starter code from TypeScript checking
+    - app-example is not part of the active application
+  - Active application TypeScript checks now pass
+  - ESLint checks passed for migrated theme files
   - git diff --check passed
-  - 38 pre-existing TypeScript errors remain:
-    - 33 in app-example
-    - 5 in OnboardingReview.tsx
+
+- Started Add Workout / Work Session flow
+  - Added a floating `+` action to Home
+  - Added an Add Work Session bottom sheet
+  - Added current date to the Add Work Session sheet
+  - Initial activity choices:
+    - Freestyle Workout
+    - Saved Routines
+    - Measurements
+    - Cardio
+  - Freestyle Workout is the first functional activity choice
+  - Other activity choices are currently UI placeholders
+
+- Added initial Freestyle Workout navigation
+  - Added a dedicated Freestyle Workout screen
+  - Added a nested Stack under the existing Workout tab
+  - Workout tab can now contain multiple screens while preserving the bottom tab navigation
+  - Current structure:
+    - workout/index.tsx remains the Workout landing area
+    - workout/freestyle.tsx is the initial active-workout screen
+    - workout/_layout.tsx manages navigation within the Workout section
+  - Home can navigate directly to Freestyle Workout from the Add Work Session sheet
+  - Kept the root authentication/navigation gate unchanged after moving the workout flow inside `(tabs)`
+
+- Clarified initial workout domain direction
+  - A freestyle workout should create a WorkoutSession rather than a reusable Routine
+  - Routine represents a reusable workout definition/template
+  - WorkoutSession represents an actual workout performed on a particular day
+  - Starting from a Routine should eventually create a WorkoutSession initialized from that routine
+  - Completed sessions must remain historical snapshots and must not depend on later Routine changes
+  - A freestyle session may optionally be saved as a Routine later
+  - Future exercise grouping should leave room for supersets without assuming one UI card always equals one exercise
+
+- Workout UX direction
+  - Workout tab landing page may eventually contain:
+    - Saved routines
+    - Programs/plans
+    - Exercise library
+    - Custom exercise creation
+  - Home `+` remains the quick-entry action for starting/logging activity
+  - Initial Freestyle Workout screen will be developed incrementally
+  - Planned workout information includes:
+    - Exercises
+    - Workout notes
+    - Completed-workout overview
+    - Duration
+    - Training volume
+    - Performance / personal-best information
+    - Per-workout difficulty/effort rating
+  - Exercise picker direction:
+    - Search/browse exercises
+    - Muscle/exercise visual
+    - Quick `+` selection
+    - Exercise detail/history view
+    - Support selecting multiple exercises before returning to the workout
+  - Do not implement supersets, persistence, exercise history, or backend workout models yet
 
 - Next:
-  - Fix the 5 active OnboardingReview.tsx TypeScript errors
-  - Decide whether app-example should be removed/excluded rather than fixing unused starter code
-  - Freeze theme/foundation work
-  - Start Add Workout flow
-    - Add workout from WeekDays
-    - Display workout sessions below WeekDays
-    - Support multiple sessions per day
+  - Design the empty Freestyle Workout screen
+  - Add the initial `+ Add Exercise` action
+  - Build a small mocked exercise picker
+  - Use the first exercise card to validate the frontend/domain model before designing backend tables or APIs
+  - Keep theme and authentication foundation frozen unless a functional issue is found
     - 
 ## 2026-10-02
 - Reviewed and stabilized auth/onboarding edge cases
