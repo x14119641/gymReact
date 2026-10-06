@@ -1,5 +1,50 @@
 # Dev Log
 
+## 2026-10-06
+
+- Started building the Freestyle Workout page
+  - Added the workout title/date
+  - Created `ExerciseContainer`
+  - For now it shows:
+    - exercise image/placeholder
+    - exercise name
+    - short summary (`3×10 · 20kg · 2 min rest`)
+    - options button
+  - Added some mock exercises to test the layout
+  - Added `+ Add Exercise`
+  - Tested the design in light/dark mode
+  - Using the neon/highlight color mainly for actions/accents
+
+- Started the Exercise Picker
+  - Added `exercise-picker.tsx` inside the Workout stack
+  - `+ Add Exercise` opens the picker
+  - Back returns to the Freestyle Workout
+  - Created a smaller `ExercisePickerRow`
+    - image/placeholder
+    - exercise name
+    - `+` button
+  - Added around 10 fake exercises to see how a longer list looks
+  - Tried `ScrollView`, then changed to `FlatList`
+  - Removed the big `Container` around the list because it looked too heavy
+  - List/header scrolling still needs some adjustment
+
+- Some decisions/ideas
+  - `ExerciseContainer` is for an exercise already in the workout
+  - `ExercisePickerRow` is for choosing an exercise from the library
+  - Don't build the backend/database yet
+  - First figure out how exercise logging should work
+  - Exercise page will probably need sets/reps/weight/rest plus previous history
+  - Not every exercise will use the same data (weight/reps, bodyweight, time, assisted, etc.)
+  - Would like exercise images and possibly videos/YouTube links later
+  - Keep the design open for supersets, but don't implement them yet
+
+- Next:
+  - Fix the picker scrolling/header
+  - Add the search bar
+  - Search/filter the mock exercises
+  - Make `+` actually add an exercise to the Freestyle Workout
+  - Start experimenting with sets/reps logging
+  - 
 ## 2026-10-05
 
 - Refactored frontend theme architecture
