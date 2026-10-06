@@ -5,6 +5,7 @@ export default function WorkoutLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="freestyle" />
+      <Stack.Screen name="exercise-picker" />
     </Stack>
   );
 }

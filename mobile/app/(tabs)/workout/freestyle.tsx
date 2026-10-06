@@ -4,9 +4,11 @@ import { useTheme } from "@/src/theme/ThemeProvider";
 import { Container } from "@/src/components/Container";
 import { ExerciseContainer } from "@/src/components/ExerciseContainer";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 
 export default function FreestyleWorkoutScreen() {
   const t = useTheme();
+  const router = useRouter();
 
   const today = new Date();
 
@@ -49,6 +51,9 @@ export default function FreestyleWorkoutScreen() {
             },
             pressed && styles.pressed,
           ]}
+          onPress={() => {
+            router.push("/workout/exercise-picker");
+          }}
         >
           <Ionicons name="add-outline" size={20} color={t.colors.highlight} />
           <Text style={[styles.AddText, { color: t.colors.highlight }]}>
