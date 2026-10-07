@@ -13,7 +13,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { exercises } from "@/src/mocks/exercises.mock";
-
+import { FilterSelectModal } from "@/src/components/FilterSelectModal";
 
 const muscles = [
   "Chest",
@@ -36,23 +36,26 @@ const equipment = [
   "Other",
 ];
 
-
 export default function ExercisePickerScreen() {
   const t = useTheme();
   const router = useRouter();
 
   const [search, setSearch] = useState("");
 
+  const [muscleModalOpen, setMuscleModalOpen] = useState(false);
+  const [equipmentModalOpen, setEquipmentModalOpen] = useState(false);
+
   const [selectedMuscle, setSelectedMuscle] = useState<string | null>(null);
-  const [selectedEquipment, setSelectedEquipment] = useState<string | null>(null);
+  const [selectedEquipment, setSelectedEquipment] = useState<string | null>(
+    null,
+  );
 
   const filteredExercises = exercises.filter((exercise) => {
     const matchesSearch = exercise.title
       .toLowerCase()
       .includes(search.trim().toLowerCase());
 
-    const matchesMuscle =
-      !selectedMuscle || exercise.muscle === selectedMuscle;
+    const matchesMuscle = !selectedMuscle || exercise.muscle === selectedMuscle;
 
     const matchesEquipment =
       !selectedEquipment || exercise.equipment === selectedEquipment;
@@ -103,7 +106,7 @@ export default function ExercisePickerScreen() {
                 borderColor: t.colors.border,
               },
             ]}
-            onPress={() => setSelectedMuscle("Chest")}
+            onPress={() => setMuscleModalOpen(true)}
           >
             <Text style={[styles.filterText, { color: t.colors.text }]}>
               {selectedMuscle ?? "Muscle"}
@@ -123,7 +126,7 @@ export default function ExercisePickerScreen() {
                 borderColor: t.colors.border,
               },
             ]}
-            onPress={() => setSelectedEquipment("Dumbbell")}
+            onPress={() => setEquipmentModalOpen(true)}
           >
             <Text style={[styles.filterText, { color: t.colors.text }]}>
               {selectedEquipment ?? "Equipment"}
@@ -149,6 +152,23 @@ export default function ExercisePickerScreen() {
             onAddPress={() => console.log("Add", item.title)}
           />
         )}
+      />
+
+      <FilterSelectModal
+        visible={muscleModalOpen}
+        title="Muscle"
+        options={muscles}
+        selectedValue={selectedMuscle}
+        onSelect={setSelectedMuscle}
+        onClose={() => setMuscleModalOpen(false)}
+      />
+      <FilterSelectModal
+        visible={equipmentModalOpen}
+        title="Equipment"
+        options={equipment}
+        selectedValue={selectedEquipment}
+        onSelect={setSelectedEquipment}
+        onClose={() => setEquipmentModalOpen(false)}
       />
     </BaseLayout>
   );
