@@ -2,7 +2,6 @@ import {
   View,
   StyleSheet,
   Text,
-  Platform,
   ImageSourcePropType,
   Image,
   Pressable,
@@ -14,15 +13,18 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 type ExercisePickerRowProps = {
   image?: ImageSourcePropType;
   title: string;
+  onPress?: () => void;
   onAddPress?: () => void;
 };
 
 export function ExercisePickerRow({
   image,
   title,
+  onPress,
   onAddPress,
 }: ExercisePickerRowProps) {
   const t = useTheme();
+
 
   const styles = useMemo(() => {
     return StyleSheet.create({
@@ -71,20 +73,29 @@ export function ExercisePickerRow({
         flex: 1,
         gap: 4,
       },
+      exerciseInfo: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+      },
     });
   }, [t]);
 
   return (
     <View style={styles.container}>
-      {image ? (
-        <Image source={image} style={styles.image} resizeMode="contain" />
-      ) : (
-        <View style={styles.image} />
-      )}
+      <Pressable style={styles.exerciseInfo} onPress={onPress} disabled={!onPress}>
+        {image ? (
+          <Image source={image} style={styles.image} resizeMode="contain" />
+        ) : (
+          <View style={styles.image} />
+        )}
 
-      <View style={styles.info}>
-        <Text style={styles.title}>{title}</Text>
-      </View>
+        <View style={styles.info}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+      </Pressable>
+
       <Pressable
         style={styles.addButton}
         onPress={onAddPress}

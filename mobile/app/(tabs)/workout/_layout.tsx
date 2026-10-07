@@ -6,6 +6,7 @@ export default function WorkoutLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="freestyle" />
       <Stack.Screen name="exercise-picker" />
+      <Stack.Screen name="exercise" />
     </Stack>
   );
 }
