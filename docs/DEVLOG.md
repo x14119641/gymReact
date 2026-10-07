@@ -1,5 +1,55 @@
 # Dev Log
 
+## 2026-10-07
+
+- Continued the Exercise Picker
+  - Moved the mock exercise list to `src/mocks/exercises.mock`
+  - Expanded the mock library with more exercises
+  - Added Muscle and Equipment data to the exercises
+  - Search now filters the exercise list
+  - Added Muscle and Equipment filter buttons
+  - Filters can work together with search
+  - Decided not to add a Type filter for now
+
+- Created `FilterSelectModal`
+  - Reusable for both Muscle and Equipment
+  - Shows the available filter options
+  - Selecting an option updates the exercise list
+  - `All` clears the filter
+  - Modal styling/dismiss behaviour still needs some work
+
+- Exercise navigation
+  - Added a generic exercise page/template
+  - Exercise rows can open the exercise page
+  - Decided exercises should be data, not separate React components/pages
+  - Later the exercise page should receive an exercise ID and load the corresponding exercise
+  - `+` will eventually add the selected exercise to the current workout instead of opening its information page
+
+- Workout structure / ideas
+  - Workout tab should eventually be a landing page for saved routines/programs, not the Exercise Library
+  - A Routine is a reusable workout template
+  - A Program can organize/schedule multiple routines
+  - A Workout Session is the actual workout performed on a particular day
+  - Freestyle creates an empty Workout Session
+  - Keep the current `workout/` route structure for now
+
+- Reviewed the current frontend structure with Codex
+  - Current route/component structure is generally OK
+  - Keep `ExerciseContainer` and `ExercisePickerRow` separate
+  - Generic `Container` is still useful, but some usages can probably become normal `View`s
+  - Possible future rename from `Container` to `SurfaceCard`
+  - Found a few small UI/interaction/cleanup issues to review later
+  - No large refactor needed
+
+- Next:
+  - Finish/polish `FilterSelectModal`
+  - Review the small issues found in the frontend review
+  - Small `Container` cleanup if it still makes sense
+  - Pass exercise identity to the exercise page
+  - Make `+` actually add an exercise to the Freestyle Workout
+  - Decide the simplest local state for the active Workout Session
+  - Start experimenting with sets/reps/weight/rest logging
+  
 ## 2026-10-06
 
 - Started building the Freestyle Workout page
@@ -44,7 +94,7 @@
   - Search/filter the mock exercises
   - Make `+` actually add an exercise to the Freestyle Workout
   - Start experimenting with sets/reps logging
-  - 
+  
 ## 2026-10-05
 
 - Refactored frontend theme architecture
