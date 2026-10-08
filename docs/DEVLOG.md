@@ -1,5 +1,43 @@
 # Dev Log
 
+## 2026-10-08
+
+- Continued working on the Freestyle Workout
+  - Started implementing the active Workout Session
+  - Added Zustand to manage the workout state
+  - Created the types for `WorkoutSession`, `WorkoutExercise` and `WorkoutSet`
+  - Added `startWorkout`, `addExercise` and `removeExercise`
+  - For now everything is stored in memory, nothing is saved permanently
+
+- Connected the Exercise Picker to the workout
+  - Can now select multiple exercises
+  - `Add exercises` adds the selected exercises to the active session
+  - Going back to Freestyle shows the exercises that were added
+  - Fixed an issue with `crypto.randomUUID()` on Android using `expo-crypto`
+
+- Updated the Freestyle Workout screen
+  - Replaced the previous exercise cards with a table
+  - Added columns for Exercise, Sets, Reps and Rest
+  - Added a small image placeholder for each exercise
+  - The values are still empty since the exercise configuration is not implemented yet
+  - Kept the Add Exercise button below the list
+  - Added a Complete Workout button, not functional yet
+
+- Exercise management
+  - Added a three-dot button to each exercise row
+  - Can remove an exercise from the active workout
+  - Added a confirmation before removing it
+  - Tested adding and removing exercises in the Android emulator
+  - Seems to be working fine for now
+
+- Next:
+  - Make Sets, Reps and Rest editable
+  - Connect the exercise configuration to Zustand
+  - Start logging actual sets with weight and repetitions
+  - Update the Freestyle table when the exercise configuration changes
+  - Eventually implement completing and saving workouts
+  - Review the small UI/cleanup issues left from the previous days
+  - 
 ## 2026-10-07
 
 - Continued the Exercise Picker
