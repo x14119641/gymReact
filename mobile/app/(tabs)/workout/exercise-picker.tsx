@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { exercises } from "@/src/mocks/exercises.mock";
 import { FilterSelectModal } from "@/src/components/FilterSelectModal";
+import { useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
 
 const muscles = [
   "Chest",
@@ -40,6 +41,9 @@ export default function ExercisePickerScreen() {
   const t = useTheme();
   const router = useRouter();
 
+  const addExercise = useWorkoutSessionStore((state) => state.addExercise);
+  const [selectedExerciseIds, setSelectedExerciseIds] = useState<string[]>([]);
+
   const [search, setSearch] = useState("");
 
   const [muscleModalOpen, setMuscleModalOpen] = useState(false);
@@ -49,6 +53,19 @@ export default function ExercisePickerScreen() {
   const [selectedEquipment, setSelectedEquipment] = useState<string | null>(
     null,
   );
+
+  const toggleExercise = (exerciseId: string) => {
+    setSelectedExerciseIds((current) =>
+      current.includes(exerciseId)
+        ? current.filter((id) => id !== exerciseId)
+        : [...current, exerciseId],
+    );
+  };
+
+  const handleAddExercises = () => {
+    selectedExerciseIds.forEach((id) => addExercise(id));
+    router.back();
+  };
 
   const filteredExercises = exercises.filter((exercise) => {
     const matchesSearch = exercise.title
@@ -141,6 +158,7 @@ export default function ExercisePickerScreen() {
       </View>
 
       <FlatList
+        style={styles.exerciseListContainer}
         data={filteredExercises}
         keyExtractor={(item) => item.id}
         keyboardShouldPersistTaps="handled"
@@ -150,13 +168,44 @@ export default function ExercisePickerScreen() {
         renderItem={({ item }) => (
           <ExercisePickerRow
             title={item.title}
-            onPress={() => router.push({pathname:"/workout/exercise", params: {exerciseId:item.id},
-            })
-          }
-            onAddPress={() => console.log("Add", item.title)}
+            onPress={() =>
+              router.push({
+                pathname: "/workout/exercise",
+                params: { exerciseId: item.id },
+              })
+            }
+            onAddPress={() => toggleExercise(item.id)}
           />
         )}
       />
+
+      <Pressable
+        disabled={selectedExerciseIds.length === 0}
+        onPress={handleAddExercises}
+        style={[
+          styles.addExercisesButton,
+          {
+            backgroundColor:
+              selectedExerciseIds.length > 0
+                ? t.colors.primary
+                : t.colors.surfaceSecondary,
+          },
+        ]}
+      >
+        <Text
+          style={{
+            color:
+              selectedExerciseIds.length > 0
+                ? t.colors.onPrimary
+                : t.colors.textMuted,
+            fontWeight: "700",
+            fontSize: 16,
+          }}
+        >
+          Add {selectedExerciseIds.length}{" "}
+          {selectedExerciseIds.length === 1 ? "exercise" : "exercises"}
+        </Text>
+      </Pressable>
 
       <FilterSelectModal
         visible={muscleModalOpen}
@@ -197,6 +246,9 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     paddingRight: 8,
   },
+  exerciseListContainer: {
+    flex: 1,
+  },
   searchBox: {
     flexDirection: "row",
     alignItems: "center",
@@ -236,5 +288,13 @@ const styles = StyleSheet.create({
   filterText: {
     fontSize: 14,
     fontWeight: "600",
+  },
+  addExercisesButton: {
+    minHeight: 52,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 12,
+    marginBottom: 12,
   },
 });

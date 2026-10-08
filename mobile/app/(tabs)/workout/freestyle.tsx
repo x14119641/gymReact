@@ -1,14 +1,30 @@
-import { Text, View, StyleSheet, Pressable, TextInput } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Pressable,
+  TextInput,
+  Alert,
+} from "react-native";
 import { BaseLayout } from "@/src/components/BaseLayout";
 import { useTheme } from "@/src/theme/ThemeProvider";
-import { WorkoutExerciseCard } from "@/src/components/WorkoutExerciseCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
+import { exercises } from "@/src/mocks/exercises.mock";
 
 export default function FreestyleWorkoutScreen() {
   const t = useTheme();
   const router = useRouter();
+
+  const activeSession = useWorkoutSessionStore((state) => state.activeSession);
+
+  const workoutExercises = activeSession?.exercises ?? [];
+  const exerciseListEmpty = workoutExercises.length === 0;
+  const removeExercise = useWorkoutSessionStore(
+    (state) => state.removeExercise,
+  );
 
   const today = new Date();
 
@@ -22,8 +38,6 @@ export default function FreestyleWorkoutScreen() {
     "exercises",
   );
   const [notes, setNotes] = useState("");
-
-  const exerciseListEmpty = true;
 
   return (
     <BaseLayout>
@@ -64,65 +78,215 @@ export default function FreestyleWorkoutScreen() {
       </View>
       {activeTab === "exercises" && (
         <View style={styles.workoutContent}>
-          <View style={styles.exerciseBlock}>
-            <WorkoutExerciseCard
-              title="Barbell Squat"
-              summary="3×10 · 20kg · 2 min rest"
-            />
-            <WorkoutExerciseCard
-              title="Sumo Squat"
-              summary="3×10 · 0kg · 2 min rest"
-            />
-          </View>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.addBtn,
-              {
-                backgroundColor: t.colors.surface,
-                borderColor: t.colors.highlight,
-              },
-              pressed && styles.pressed,
-            ]}
-            onPress={() => {
-              router.push("/workout/exercise-picker");
-            }}
-          >
-            <Ionicons name="add-outline" size={20} color={t.colors.primary} />
-            <Text style={[styles.addText, { color: t.colors.primary }]}>
-              Add Exercise
+          {exerciseListEmpty && (
+            <Text style={[styles.emptyText, { color: t.colors.textMuted }]}>
+              No exercises added yet.
             </Text>
-          </Pressable>
-          {!exerciseListEmpty && (
-            <View style={styles.completeArea}>
-              <Pressable
-                style={({ pressed }) => [
-                  styles.completeBtn,
-                  {
-                    backgroundColor: t.colors.primary,
-                    opacity: pressed ? 0.8 : 1,
-                  },
-                ]}
-                onPress={() => {
-                  console.log("Complete workout pressed");
-                }}
-              >
-                <Ionicons
-                  name="checkmark-circle-outline"
-                  size={22}
-                  color={t.colors.onPrimary}
-                />
-                <Text
-                  style={[styles.completeText, { color: t.colors.onPrimary }]}
-                >
-                  Complete Workout
-                </Text>
-              </Pressable>
-            </View>
           )}
+
+          <View style={styles.exerciseTable}>
+            {!exerciseListEmpty && (
+              <View style={styles.tableHeader}>
+                <Text
+                  style={[
+                    styles.exerciseColumn,
+                    styles.columnLabel,
+                    { color: t.colors.textMuted },
+                  ]}
+                >
+                  EXERCISE
+                </Text>
+                <Text
+                  style={[
+                    styles.setsColumn,
+                    styles.columnLabel,
+                    { color: t.colors.textMuted },
+                  ]}
+                >
+                  SETS
+                </Text>
+                <Text
+                  style={[
+                    styles.repsColumn,
+                    styles.columnLabel,
+                    { color: t.colors.textMuted },
+                  ]}
+                >
+                  REPS
+                </Text>
+                <Text
+                  style={[
+                    styles.restColumn,
+                    styles.columnLabel,
+                    { color: t.colors.textMuted },
+                  ]}
+                >
+                  REST
+                </Text>
+                <View style={styles.menuColumn} />
+              </View>
+            )}
+
+            {workoutExercises.map((workoutExercise) => {
+              const exercise = exercises.find(
+                (item) => item.id === workoutExercise.exerciseId,
+              );
+
+              if (!exercise) return null;
+
+              const config = workoutExercise.config;
+
+              const reps =
+                config.targetRepsMin != null && config.targetRepsMax != null
+                  ? `${config.targetRepsMin}–${config.targetRepsMax}`
+                  : "—";
+
+              const rest =
+                config.restSeconds != null
+                  ? `${Math.floor(config.restSeconds / 60)}:${String(
+                      config.restSeconds % 60,
+                    ).padStart(2, "0")}`
+                  : "—";
+
+              return (
+                <Pressable
+                  key={workoutExercise.id}
+                  style={[
+                    styles.exerciseRow,
+                    { borderBottomColor: t.colors.border },
+                  ]}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/workout/exercise",
+                      params: { exerciseId: exercise.id },
+                    })
+                  }
+                >
+                  <View style={styles.exerciseColumn}>
+                    <View
+                      style={[
+                        styles.exerciseThumbnail,
+                        {
+                          backgroundColor: t.colors.surface,
+                          borderColor: t.colors.border,
+                        },
+                      ]}
+                    >
+                      <Ionicons
+                        name="barbell-outline"
+                        size={24}
+                        color={t.colors.textMuted}
+                      />
+                    </View>
+
+                    <Text
+                      style={[styles.exerciseName, { color: t.colors.text }]}
+                      numberOfLines={2}
+                    >
+                      {exercise.title}
+                    </Text>
+                  </View>
+
+                  <Text
+                    style={[
+                      styles.setsColumn,
+                      styles.cellText,
+                      { color: t.colors.text },
+                    ]}
+                  >
+                    {config.targetSets ?? "—"}
+                  </Text>
+
+                  <Text
+                    style={[
+                      styles.repsColumn,
+                      styles.cellText,
+                      { color: t.colors.text },
+                    ]}
+                  >
+                    {reps}
+                  </Text>
+
+                  <Text
+                    style={[
+                      styles.restColumn,
+                      styles.cellText,
+                      { color: t.colors.text },
+                    ]}
+                  >
+                    {rest}
+                  </Text>
+
+                  <Pressable
+                    style={styles.menuColumn}
+                    onPress={(event) => {
+                      event.stopPropagation();
+
+                      Alert.alert(
+                        exercise.title,
+                        "Remove this exercise from your workout?",
+                        [
+                          {
+                            text: "Cancel",
+                            style: "cancel",
+                          },
+                          {
+                            text: "Remove",
+                            style: "destructive",
+                            onPress: () => removeExercise(workoutExercise.id),
+                          },
+                        ],
+                      );
+                    }}
+                  >
+                    <Ionicons
+                      name="ellipsis-vertical"
+                      size={18}
+                      color={t.colors.textMuted}
+                    />
+                  </Pressable>
+                </Pressable>
+              );
+            })}
+            <Pressable
+              style={({ pressed }) => [
+                styles.addBtn,
+                {
+                  backgroundColor: t.colors.surface,
+                  borderColor: t.colors.highlight,
+                },
+                pressed && styles.pressed,
+              ]}
+              onPress={() => {
+                router.push("/workout/exercise-picker");
+              }}
+            >
+              <Ionicons name="add-outline" size={20} color={t.colors.primary} />
+              <Text style={[styles.addText, { color: t.colors.primary }]}>
+                Add Exercise
+              </Text>
+            </Pressable>
+          </View>
         </View>
       )}
 
+      {!exerciseListEmpty && (
+        <View style={styles.completeArea}>
+          <Pressable
+            style={[styles.completeBtn, { backgroundColor: t.colors.primary }]}
+            onPress={() => console.log("Complete workout pressed")}
+          >
+            <Ionicons
+              name="checkmark-circle-outline"
+              size={22}
+              color={t.colors.onPrimary}
+            />
+            <Text style={[styles.completeText, { color: t.colors.onPrimary }]}>
+              Complete Workout
+            </Text>
+          </Pressable>
+        </View>
+      )}
       {activeTab === "notes" && (
         <View style={styles.notesContent}>
           <TextInput
@@ -220,5 +384,80 @@ const styles = StyleSheet.create({
   completeText: {
     fontSize: 16,
     fontWeight: "700",
+  },
+  emptyText: {
+    textAlign: "center",
+    marginVertical: 24,
+    fontSize: 14,
+  },
+  exerciseTable: {
+    marginTop: 12,
+  },
+
+  tableHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+  },
+
+  columnLabel: {
+    fontSize: 10,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+  },
+
+  exerciseRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+
+  exerciseColumn: {
+    flex: 2.6,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  setsColumn: {
+    flex: 0.55,
+    textAlign: "center",
+  },
+
+  repsColumn: {
+    flex: 0.9,
+    textAlign: "center",
+  },
+
+  restColumn: {
+    flex: 0.8,
+    textAlign: "center",
+  },
+
+  menuColumn: {
+    width: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  exerciseThumbnail: {
+    width: 46,
+    height: 46,
+    borderWidth: 1,
+    borderRadius: 9,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  exerciseName: {
+    fontSize: 13,
+    fontWeight: "600",
+    flexShrink: 1,
+  },
+
+  cellText: {
+    fontSize: 13,
+    fontWeight: "600",
   },
 });
