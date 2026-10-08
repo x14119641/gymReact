@@ -150,7 +150,9 @@ export default function ExercisePickerScreen() {
         renderItem={({ item }) => (
           <ExercisePickerRow
             title={item.title}
-            onPress={() => router.push("/workout/exercise")}
+            onPress={() => router.push({pathname:"/workout/exercise", params: {exerciseId:item.id},
+            })
+          }
             onAddPress={() => console.log("Add", item.title)}
           />
         )}
