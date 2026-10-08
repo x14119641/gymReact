@@ -12,7 +12,7 @@ import {
   addMonths,
   isSameMonth,
 } from "date-fns";
-import { Container } from "@/src/components/Container";
+import { SurfaceCard } from "@/src/components/SurfaceCard";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { useDateStore } from "@/src/store/dateStore";
 
@@ -67,9 +67,7 @@ export default function CalendarModal() {
 
   return (
     <View style={[styles.screen, { backgroundColor: t.colors.background }]}>
-      <Container
-        variant="default"
-        density="compact"
+      <SurfaceCard
         style={{ marginHorizontal: 12, marginTop: 12 }}
       >
         {/* Header */}
@@ -239,7 +237,7 @@ export default function CalendarModal() {
             </Text>
           </Pressable>
         </View>
-      </Container>
+      </SurfaceCard>
     </View>
   );
 }

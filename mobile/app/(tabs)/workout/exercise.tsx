@@ -1,7 +1,7 @@
 import { Text, View, StyleSheet, Pressable } from "react-native";
 import { BaseLayout } from "@/src/components/BaseLayout";
 import { useTheme } from "@/src/theme/ThemeProvider";
-import { Container } from "@/src/components/Container";
+import { SurfaceCard } from "@/src/components/SurfaceCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 
@@ -17,12 +17,12 @@ export default function ExerciseScreen() {
       >
         <Ionicons name="arrow-back" size={20} color={t.colors.primary} />
       </Pressable>
-      <Container variant="default" density="compact">
+      <SurfaceCard>
         <View style={styles.header}>
             <Text>Exercise</Text>
         </View>
         
-      </Container>
+      </SurfaceCard>
     </BaseLayout>
   );
 }

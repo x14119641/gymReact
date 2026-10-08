@@ -17,7 +17,7 @@ import {
   isSameDay,
 } from "date-fns";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Container } from "./Container";
+import { SurfaceCard } from "./SurfaceCard";
 import { useTheme } from "../theme/ThemeProvider";
 import { useDateStore } from "../store/dateStore";
 import { Link, useRouter } from "expo-router";
@@ -187,7 +187,7 @@ export default function WeekCard() {
   );
 
   return (
-    <Container variant="default" density="compact">
+    <SurfaceCard>
       <View style={{ width: "100%" }} onLayout={onLayoutBox}>
         {!pageW ? (
           <Text style={[styles.title, { color: t.colors.textMuted }]}>
@@ -269,7 +269,7 @@ export default function WeekCard() {
           </>
         )}
       </View>
-    </Container>
+    </SurfaceCard>
   );
 }
 

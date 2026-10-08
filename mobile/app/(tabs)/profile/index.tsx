@@ -7,13 +7,12 @@ import {
   Switch,
   Pressable,
 } from "react-native";
-import { Card } from "@/src/components/Card";
 import { SettingRow } from "@/src/components/SettingRow";
 import { mockProfile } from "@/src/mocks/profile.mock";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Container } from "@/src/components/Container";
+import { SurfaceCard } from "@/src/components/SurfaceCard";
 import { useAuth } from "@/src/store/auth";
 
 export default function ProfileScreen() {
@@ -27,10 +26,14 @@ export default function ProfileScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: t.colors.background }}>
       <ScrollView
-        style={{ backgroundColor: t.colors.background, flex: 1, marginHorizontal: 12 }}
+        style={{
+          backgroundColor: t.colors.background,
+          flex: 1,
+          marginHorizontal: 12,
+        }}
       >
         <Text style={[s.title, { color: t.colors.text }]}>Profile</Text>
-        <Container variant="default" density="compact">
+        <SurfaceCard>
           <Text style={[s.subtitle, { color: t.colors.text }]}>Account</Text>
           <SettingRow
             icon="mail-outline"
@@ -42,9 +45,9 @@ export default function ProfileScreen() {
             label="Username"
             value={mockProfile.user.username}
           />
-        </Container>
+        </SurfaceCard>
 
-        <Container variant="default" density="compact">
+        <SurfaceCard>
           <SettingRow
             icon="moon-outline"
             label="Dark Mode"
@@ -52,16 +55,23 @@ export default function ProfileScreen() {
               <Switch
                 accessibilityLabel="Dark Mode"
                 value={t.scheme === "dark"}
-                onValueChange={(enabled) => t.setMode(enabled ? "dark" : "light")}
-                trackColor={{ false: t.colors.borderStrong, true: t.colors.primary }}
+                onValueChange={(enabled) =>
+                  t.setMode(enabled ? "dark" : "light")
+                }
+                trackColor={{
+                  false: t.colors.borderStrong,
+                  true: t.colors.primary,
+                }}
                 thumbColor={t.colors.surface}
                 ios_backgroundColor={t.colors.borderStrong}
               />
             }
           />
-        </Container>
+        </SurfaceCard>
 
-        <Text style={[s.hint, { color: t.colors.textMuted }]}>Mock only. No backend calls.</Text>
+        <Text style={[s.hint, { color: t.colors.textMuted }]}>
+          Mock only. No backend calls.
+        </Text>
 
         <Pressable
           style={({ pressed }) => [
@@ -81,7 +91,6 @@ export default function ProfileScreen() {
 
 const s = StyleSheet.create({
   screen: { flex: 1, backgroundColor: "#0B0F14" },
-  container: { padding: 16, paddingBottom: 32 },
 
   title: {
     fontSize: 28,

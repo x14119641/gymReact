@@ -1,7 +1,7 @@
 // src/components/HeroStatsCard.tsx
 import { View, Text, StyleSheet } from "react-native";
 import { useTheme } from "@/src/theme/ThemeProvider";
-import { Container } from "@/src/components/Container";
+import { SurfaceCard } from "@/src/components/SurfaceCard";
 
 type FatigueLevel = "green" | "yellow" | "red";
 
@@ -44,7 +44,7 @@ export default function HeroStatsCard({
       : "🔥 —";
 
   return (
-    <Container variant="default" density="compact" style={{marginHorizontal:12, marginTop:12}}>
+    <SurfaceCard style={{marginHorizontal:12, marginTop:12}}>
 
         {/* Header */}
         <View style={s.headerRow}>
@@ -82,7 +82,7 @@ export default function HeroStatsCard({
         <Text style={[s.note, { color: t.colors.text }]} numberOfLines={2}>
           {coachNote}
         </Text>
-    </Container>
+    </SurfaceCard>
   );
 }
 

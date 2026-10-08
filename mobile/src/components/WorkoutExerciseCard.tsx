@@ -11,19 +11,19 @@ import { useMemo } from "react";
 import { useTheme } from "../theme/ThemeProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-type ExerciseContainerProps = {
+type WorkoutExerciseCardProps = {
   image?: ImageSourcePropType;
   title: string;
   summary: string;
   onOptionsPress?: () => void;
 };
 
-export function ExerciseContainer({
+export function WorkoutExerciseCard({
   image,
   title,
   summary,
   onOptionsPress,
-}: ExerciseContainerProps) {
+}: WorkoutExerciseCardProps) {
   const t = useTheme();
 
   const styles = useMemo(() => {
