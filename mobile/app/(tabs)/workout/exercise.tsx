@@ -15,7 +15,7 @@ export default function ExerciseScreen() {
         style={({ pressed }) => [styles.backBtn, pressed && styles.pressed]}
         onPress={() => router.back()}
       >
-        <Ionicons name="arrow-back" size={20} color={t.colors.highlight} />
+        <Ionicons name="arrow-back" size={20} color={t.colors.primary} />
       </Pressable>
       <Container variant="default" density="compact">
         <View style={styles.header}>

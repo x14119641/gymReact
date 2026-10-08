@@ -55,8 +55,8 @@ export default function FreestyleWorkoutScreen() {
             router.push("/workout/exercise-picker");
           }}
         >
-          <Ionicons name="add-outline" size={20} color={t.colors.highlight} />
-          <Text style={[styles.AddText, { color: t.colors.highlight }]}>
+          <Ionicons name="add-outline" size={20} color={t.colors.primary} />
+          <Text style={[styles.AddText, { color: t.colors.primary }]}>
             Add Exercise
           </Text>
         </Pressable>

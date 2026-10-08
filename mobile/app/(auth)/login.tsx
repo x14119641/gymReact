@@ -9,19 +9,25 @@ export default function Login() {
   console.log("LOGIN RENDER");
   const t = useTheme();
   const router = useRouter();
-  const doLogin = useAuth(s => s.doLogin);
+  const doLogin = useAuth((s) => s.doLogin);
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function onsubmit() {
-    setLoading(true);
     setErr(null);
     if (!identifier) {
       setErr("Identifier missing");
       return;
     }
+    if (!password) {
+      setErr("Password missing");
+      return;
+    }
+
+    setLoading(true);
+
     try {
       await doLogin(identifier, password);
       // router.replace("/(tabs)");
@@ -79,12 +85,23 @@ export default function Login() {
         ]}
         placeholderTextColor={t.colors.subtext}
       />
-      
-      <Button title={loading ? "..." : "Login"} onPress={onsubmit} />
-      <Text style={{ color: t.colors.subtext, paddingTop: 8, textAlign:"center" }}>Not registered? <Text style={{ color: t.colors.accent}} onPress={onRegister}>click here!</Text></Text>
-        
+
+      <Button title={loading ? "..." : "Login"} onPress={onsubmit} disabled={loading} />
+      <Text
+        style={{ color: t.colors.subtext, paddingTop: 8, textAlign: "center" }}
+      >
+        Not registered?{" "}
+        <Text style={{ color: t.colors.accent }} onPress={onRegister}>
+          click here!
+        </Text>
+      </Text>
+
       {err ? (
-        <Text style={{ color: t.colors.error, paddingTop: 8, textAlign:"center" }}>{err}</Text>
+        <Text
+          style={{ color: t.colors.error, paddingTop: 8, textAlign: "center" }}
+        >
+          {err}
+        </Text>
       ) : null}
     </View>
   );
@@ -106,8 +123,3 @@ const s = StyleSheet.create({
     marginBottom: 12,
   },
 });
-
-
-
-
-

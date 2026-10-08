@@ -69,7 +69,7 @@ export default function ExercisePickerScreen() {
         style={({ pressed }) => [styles.backBtn, pressed && styles.pressed]}
         onPress={() => router.back()}
       >
-        <Ionicons name="arrow-back" size={20} color={t.colors.highlight} />
+        <Ionicons name="arrow-back" size={20} color={t.colors.primary} />
       </Pressable>
 
       <View style={styles.header}>
@@ -143,6 +143,8 @@ export default function ExercisePickerScreen() {
       <FlatList
         data={filteredExercises}
         keyExtractor={(item) => item.id}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
         contentContainerStyle={styles.exerciseList}
         showsVerticalScrollIndicator={true}
         renderItem={({ item }) => (
