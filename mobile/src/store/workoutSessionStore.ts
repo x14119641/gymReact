@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { WorkoutSession, WorkoutExercise } from "../types/workout";
+import { WorkoutSession, WorkoutExercise, WorkoutExerciseConfig } from "../types/workout";
 import * as Crypto from "expo-crypto";
 
 type WorkoutSessionStore = {
@@ -8,6 +8,10 @@ type WorkoutSessionStore = {
   startWorkout: () => void;
   addExercise: (exerciseId: string) => void;
   removeExercise: (WorkoutExerciseId: string) => void;
+  updateExerciseConfig: (
+    workoutExerciseId: string,
+    config: Partial<WorkoutExerciseConfig>,
+  ) => void;
 };
 
 export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
@@ -64,4 +68,25 @@ export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
         },
       };
     }),
+
+    updateExerciseConfig: (workoutExerciseId, config) =>
+      set((state) => {
+        if (!state.activeSession) return state;
+
+        return {
+          activeSession : {
+            ...state.activeSession,
+            exercises: state.activeSession.exercises.map((exercise) =>
+            exercise.id === workoutExerciseId
+              ? {
+                ...exercise,
+                config : {
+                  ...exercise.config,
+                  ...config,
+                },
+              } :exercise,
+          ),
+          },
+        };
+      }),
 }));
