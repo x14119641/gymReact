@@ -10,6 +10,7 @@ import {
 import { authBridge } from "../services/authBridge";
 import type { User } from "@/src/types/user";
 import { userProfileRecord } from "./profile";
+import { useWorkoutSessionStore } from "./workoutSessionStore";
 
 const secureStorage = {
   getItem: async (key: string) => (await SecureStore.getItemAsync(key)) ?? null,
@@ -109,6 +110,7 @@ export const useAuth = create<AuthState>()(
           } catch {}
           authBridge.setAccessToken(null);
           authBridge.setRefreshToken(null);
+          useWorkoutSessionStore.getState().resetWorkout();
           set({ user: null, accessToken: null, refreshToken: null });
           userProfileRecord.getState().clearProfile();
           console.log("[store] logout called");

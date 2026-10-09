@@ -6,6 +6,7 @@ type WorkoutSessionStore = {
   activeSession: WorkoutSession | null;
 
   startWorkout: () => void;
+  resetWorkout: () => void;
   addExercise: (exerciseId: string) => void;
   removeExercise: (WorkoutExerciseId: string) => void;
   updateExerciseConfig: (
@@ -16,6 +17,8 @@ type WorkoutSessionStore = {
 
 export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
   activeSession: null,
+
+  resetWorkout: () => set({ activeSession: null }),
 
   startWorkout: () =>
     set((state) => {
