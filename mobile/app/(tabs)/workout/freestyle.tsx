@@ -5,7 +5,6 @@ import {
   Pressable,
   TextInput,
   Alert,
-  ScrollView,
 } from "react-native";
 import { BaseLayout } from "@/src/components/BaseLayout";
 import { useTheme } from "@/src/theme/ThemeProvider";
@@ -17,6 +16,7 @@ import { exercises } from "@/src/mocks/exercises.mock";
 import { ExerciseOptionsModal } from "@/src/features/workout/components/ExerciseOptionsModal";
 import { ExerciseConfigModal } from "@/src/features/workout/components/ExerciseConfigModal";
 import { WorkoutExerciseTable } from "@/src/features/workout/components/WorkoutExerciseTable";
+import { WorkoutCompletionModal } from "@/src/features/workout/components/WorkoutCompletionModal";
 
 export default function FreestyleWorkoutScreen() {
   const t = useTheme();
@@ -27,6 +27,8 @@ export default function FreestyleWorkoutScreen() {
   );
 
   const activeSession = useWorkoutSessionStore((state) => state.activeSession);
+  const updateNotes = useWorkoutSessionStore((state) => state.updateNotes);
+  const notes = activeSession?.notes ?? "";
 
   const workoutExercises = activeSession?.exercises ?? [];
   const exerciseListEmpty = workoutExercises.length === 0;
@@ -39,6 +41,7 @@ export default function FreestyleWorkoutScreen() {
   const ensureExerciseSets = useWorkoutSessionStore(
     (state) => state.ensureExerciseSets,
   );
+  const [completionVisible, setCompletionVisible] = useState(false);
 
   const today = new Date();
 
@@ -51,7 +54,10 @@ export default function FreestyleWorkoutScreen() {
   const [activeTab, setActiveTab] = useState<"exercises" | "notes">(
     "exercises",
   );
-  const [notes, setNotes] = useState("");
+
+  const [workoutEffort, setWorkoutEffort] = useState<
+    "easy" | "moderate" | "hard" | "maximum" | null
+  >(null);
 
   const [editingExerciseId, setEditingExerciseId] = useState<string | null>(
     null,
@@ -221,11 +227,11 @@ export default function FreestyleWorkoutScreen() {
         </View>
       )}
 
-      {!exerciseListEmpty && (
+      {activeTab === "exercises" && !exerciseListEmpty && (
         <View style={styles.completeArea}>
           <Pressable
             style={[styles.completeBtn, { backgroundColor: t.colors.primary }]}
-            onPress={() => console.log("Complete workout pressed")}
+            onPress={() => setCompletionVisible(true)}
           >
             <Ionicons
               name="checkmark-circle-outline"
@@ -243,7 +249,7 @@ export default function FreestyleWorkoutScreen() {
           <TextInput
             multiline
             value={notes}
-            onChangeText={setNotes}
+            onChangeText={updateNotes}
             placeholder="How did your workout go? Technique, discomfort, progress..."
             placeholderTextColor={t.colors.textMuted}
             textAlignVertical="top"
@@ -258,6 +264,25 @@ export default function FreestyleWorkoutScreen() {
           />
         </View>
       )}
+
+      <WorkoutCompletionModal
+        visible={completionVisible}
+        notes={notes}
+        onNotesChange={updateNotes}
+        onClose={() => setCompletionVisible(false)}
+        onSkip={() => {
+          console.log("Workout feedback skipped");
+          setCompletionVisible(false);
+        }}
+        onSave={(effort) => {
+          console.log("Workout feedback:", {
+            effort,
+            notes,
+          });
+
+          setCompletionVisible(false);
+        }}
+      />
 
       <ExerciseConfigModal
         visible={editingExerciseId !== null}

@@ -8,11 +8,23 @@ import {
 import * as Crypto from "expo-crypto";
 import { exercises } from "../mocks/exercises.mock";
 
+
+export type WorkoutEffort = "easy" | "moderate" | "hard" | "maximum";
+
+export type CompletedWorkoutSession = WorkoutSession & {
+  completedAt: string;
+  effort: WorkoutEffort | null;
+};
+
 type WorkoutSessionStore = {
   activeSession: WorkoutSession | null;
+  completedSession: CompletedWorkoutSession | null;
+
+  completeWorkout: (effort: WorkoutEffort | null) => void;
 
   startWorkout: () => void;
   resetWorkout: () => void;
+  updateNotes: (notes: string) => void;
   addExercise: (exerciseId: string) => void;
   removeExercise: (WorkoutExerciseId: string) => void;
   updateExerciseConfig: (
@@ -30,8 +42,21 @@ type WorkoutSessionStore = {
 
 export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
   activeSession: null,
+  completedSession: null,
 
   resetWorkout: () => set({ activeSession: null }),
+
+  updateNotes: (notes) =>
+  set((state) => {
+    if (!state.activeSession) return state;
+
+    return {
+      activeSession: {
+        ...state.activeSession,
+        notes,
+      },
+    };
+  }),
 
   startWorkout: () =>
     set((state) => {
@@ -202,4 +227,22 @@ export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
         },
       };
     }),
+
+    completeWorkout: (effort) =>
+  set((state) => {
+    const session = state.activeSession;
+
+    if (!session || session.exercises.length === 0) {
+      return state;
+    }
+
+    return {
+      completedSession: {
+        ...session,
+        completedAt: new Date().toISOString(),
+        effort,
+      },
+      activeSession: null,
+    };
+  }),
 }));
