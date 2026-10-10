@@ -1,23 +1,32 @@
-import { Text, View, StyleSheet, Pressable } from "react-native";
+import { Text, View, StyleSheet, Pressable, FlatList } from "react-native";
 import { BaseLayout } from "@/src/components/BaseLayout";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { exercises } from "@/src/mocks/exercises.mock";
 import { useState } from "react";
-
-const mockSets = [
-  { id: 1, lastReps: "12", lastWeight: "10" },
-  { id: 2, lastReps: "10", lastWeight: "10" },
-  { id: 3, lastReps: "8", lastWeight: "10" },
-];
+import { useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
 
 export default function ExerciseScreen() {
   const t = useTheme();
+
   const router = useRouter();
 
-  const { exerciseId } = useLocalSearchParams<{ exerciseId?: string }>();
+  const { exerciseId, workoutExerciseId } = useLocalSearchParams<{
+    exerciseId?: string;
+
+    workoutExerciseId?: string;
+  }>();
+
   const exercise = exercises.find((item) => item.id === exerciseId);
+
+  const workoutExercise = useWorkoutSessionStore((state) =>
+    state.activeSession?.exercises.find(
+      (item) => item.id === workoutExerciseId,
+    ),
+  );
+
+  const workoutSets = workoutExercise?.sets ?? [];
 
   const [activeTab, setActiveTab] = useState<"exercise" | "overview">(
     "exercise",
@@ -51,6 +60,7 @@ export default function ExerciseScreen() {
       >
         <Ionicons name="arrow-back" size={20} color={t.colors.primary} />
       </Pressable>
+
       <Text style={[styles.title, { color: t.colors.text }]}>
         {exercise.title}
       </Text>
@@ -80,10 +90,11 @@ export default function ExerciseScreen() {
                   SETS
                 </Text>
                 <Text style={[styles.configValue, { color: t.colors.text }]}>
-                  03
+                  {workoutExercise?.config.targetSets != null
+                    ? String(workoutExercise.config.targetSets).padStart(2, "0")
+                    : "—"}
                 </Text>
               </View>
-
               <View style={styles.configurationItem}>
                 <Text
                   style={[styles.configLabel, { color: t.colors.textMuted }]}
@@ -91,10 +102,12 @@ export default function ExerciseScreen() {
                   REP RANGE
                 </Text>
                 <Text style={[styles.configValue, { color: t.colors.text }]}>
-                  10–12
+                  {workoutExercise?.config.targetRepsMin != null &&
+                  workoutExercise?.config.targetRepsMax != null
+                    ? `${workoutExercise.config.targetRepsMin}–${workoutExercise.config.targetRepsMax}`
+                    : "—"}
                 </Text>
               </View>
-
               <View style={styles.configurationItem}>
                 <Text
                   style={[styles.configLabel, { color: t.colors.textMuted }]}
@@ -102,7 +115,9 @@ export default function ExerciseScreen() {
                   REST
                 </Text>
                 <Text style={[styles.configValue, { color: t.colors.text }]}>
-                  2:00
+                  {workoutExercise?.config.restSeconds != null
+                    ? `${Math.floor(workoutExercise.config.restSeconds / 60)}:${String(workoutExercise.config.restSeconds % 60).padStart(2, "0")}`
+                    : "—"}
                 </Text>
               </View>
             </View>
@@ -123,6 +138,7 @@ export default function ExerciseScreen() {
                   size={15}
                   color={t.colors.primary}
                 />
+
                 <Text style={{ color: t.colors.text }}>{exercise.muscle}</Text>
               </View>
 
@@ -137,6 +153,7 @@ export default function ExerciseScreen() {
                   size={15}
                   color={t.colors.primary}
                 />
+
                 <Text style={{ color: t.colors.text }}>
                   {exercise.equipment}
                 </Text>
@@ -162,6 +179,7 @@ export default function ExerciseScreen() {
           </View>
         )}
       </View>
+
       <View style={styles.tabBar}>
         {(["exercise", "overview"] as const).map((tab) => (
           <Pressable
@@ -188,9 +206,11 @@ export default function ExerciseScreen() {
           </Pressable>
         ))}
       </View>
+
       {activeTab === "exercise" && (
         <View style={styles.table}>
           {/* Set table headings */}
+
           <View style={styles.setRow}>
             <Text
               style={[
@@ -201,6 +221,7 @@ export default function ExerciseScreen() {
             >
               SET
             </Text>
+
             <Text
               style={[
                 styles.inputColumn,
@@ -210,6 +231,7 @@ export default function ExerciseScreen() {
             >
               REPS
             </Text>
+
             <Text
               style={[
                 styles.inputColumn,
@@ -221,9 +243,13 @@ export default function ExerciseScreen() {
             </Text>
           </View>
 
-          {/* Mock sets */}
-          {mockSets.map((set, index) => (
-            <View key={set.id}>
+          <FlatList
+            data={workoutSets}
+            keyExtractor={(set) => set.id}
+            style={styles.setList}
+            contentContainerStyle={styles.setListContent}
+            keyboardShouldPersistTaps="handled"
+            renderItem={({ item: set, index }) => (
               <View style={styles.setRow}>
                 <View style={styles.setColumn}>
                   <View
@@ -235,11 +261,10 @@ export default function ExerciseScreen() {
                     <Text
                       style={[styles.setBadgeText, { color: t.colors.primary }]}
                     >
-                      {String(set.id).padStart(2, "0")}
+                      {String(index + 1).padStart(2, "0")}
                     </Text>
                   </View>
                 </View>
-
                 <View style={styles.inputColumn}>
                   <View
                     style={[
@@ -250,16 +275,19 @@ export default function ExerciseScreen() {
                       },
                     ]}
                   >
-                    <Text style={{ color: t.colors.textMuted }}>10–12</Text>
+                    <Text style={{ color: t.colors.textMuted }}>
+                      {workoutExercise?.config.targetRepsMin != null &&
+                      workoutExercise?.config.targetRepsMax != null
+                        ? `${workoutExercise.config.targetRepsMin}–${workoutExercise.config.targetRepsMax}`
+                        : "—"}
+                    </Text>
                   </View>
-
                   <Text
                     style={[styles.lastTime, { color: t.colors.textMuted }]}
                   >
-                    Last: {set.lastReps}
+                    Last: x
                   </Text>
                 </View>
-
                 <View style={styles.inputColumn}>
                   <View
                     style={[
@@ -272,44 +300,50 @@ export default function ExerciseScreen() {
                   >
                     <Text style={{ color: t.colors.textMuted }}>—</Text>
                   </View>
-
                   <Text
                     style={[styles.lastTime, { color: t.colors.textMuted }]}
                   >
-                    Last: {set.lastWeight} kg
+                    Last: y kg
                   </Text>
                 </View>
               </View>
-
-              {index < mockSets.length - 1 && (
-                <View
+            )}
+            ListFooterComponent={
+              workoutExerciseId && workoutExercise ? (
+                <Pressable
                   style={[
-                    styles.setDivider,
-                    { backgroundColor: t.colors.border },
+                    styles.addSetPlaceholder,
+                    { borderColor: t.colors.border },
                   ]}
-                />
-              )}
-            </View>
-          ))}
-
-          <View
-            style={[styles.addSetPlaceholder, { borderColor: t.colors.border }]}
-          >
-            <Ionicons name="add-outline" size={20} color={t.colors.primary} />
-            <Text style={{ color: t.colors.primary, fontWeight: "600" }}>
-              Add set
-            </Text>
-          </View>
+                  onPress={() =>
+                    useWorkoutSessionStore.getState().addSet(workoutExerciseId)
+                  }
+                >
+                  <Ionicons
+                    name="add-outline"
+                    size={20}
+                    color={t.colors.primary}
+                  />
+                  <Text style={{ color: t.colors.primary, fontWeight: "600" }}>
+                    Add set
+                  </Text>
+                </Pressable>
+              ) : null
+            }
+          />
         </View>
       )}
+
       {activeTab === "overview" && (
         <View style={styles.overviewContent}>
           {/* Media placeholder */}
+
           <View
             style={[
               styles.mediaPlaceholder,
               {
                 backgroundColor: t.colors.surface,
+
                 borderColor: t.colors.border,
               },
             ]}
@@ -326,6 +360,7 @@ export default function ExerciseScreen() {
               Video coming later
             </Text>
           </View>
+
           <View style={styles.overviewSection}>
             <Text style={[styles.overviewHeading, { color: t.colors.text }]}>
               Muscles worked
@@ -334,8 +369,10 @@ export default function ExerciseScreen() {
             <View
               style={[
                 styles.musclePlaceholder,
+
                 {
                   backgroundColor: t.colors.surface,
+
                   borderColor: t.colors.border,
                 },
               ]}
@@ -346,6 +383,7 @@ export default function ExerciseScreen() {
                   size={42}
                   color={t.colors.textMuted}
                 />
+
                 <Text style={{ color: t.colors.textMuted }}>Front view</Text>
               </View>
 
@@ -355,12 +393,14 @@ export default function ExerciseScreen() {
                   size={42}
                   color={t.colors.textMuted}
                 />
+
                 <Text style={{ color: t.colors.textMuted }}>Back view</Text>
               </View>
             </View>
           </View>
 
           {/* Instructions placeholder */}
+
           <View style={styles.overviewSection}>
             <Text style={[styles.overviewHeading, { color: t.colors.text }]}>
               Instructions
@@ -381,125 +421,170 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     padding: 6,
   },
+
   pressed: { opacity: 0.75 },
+
   headerDetails: {
     height: 100,
   },
+
   errorContainer: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
   },
+
   title: {
     fontSize: 24,
     fontWeight: "700",
     marginTop: 12,
   },
+
   tabBar: {
     flexDirection: "row",
     marginTop: 16,
   },
+
   tab: {
     flex: 1,
     alignItems: "center",
     paddingVertical: 14,
   },
+
   table: {
-    marginTop: 20,
-    gap: 12,
+    flex: 1,
+    minHeight: 0,
+    marginTop: 12,
+    gap: 8,
   },
+
+  setList: {
+    flex: 1,
+    minHeight: 0,
+    marginRight: -6,
+    paddingRight: 6,
+  },
+
+  setListContent: {
+    paddingBottom: 16,
+  },
+
+  setRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 10,
+    paddingVertical: 5,
+  },
+
+  setBadge: {
+    height: 42,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  setBadgeText: {
+    fontSize: 16,
+    fontWeight: "700",
+  },
+
+  inputPlaceholder: {
+    width: "100%",
+    height: 42,
+    borderWidth: 1,
+    borderRadius: 8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  addSetPlaceholder: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderRadius: 10,
+    marginTop: 8,
+    marginBottom: 8,
+  },
+
   configurationContent: {
     marginTop: 4,
     gap: 6,
   },
+
   configurationHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
+
   sectionLabel: {
     fontSize: 11,
     fontWeight: "600",
     letterSpacing: 1.2,
   },
+
   configurationRow: {
     flexDirection: "row",
     marginTop: 8,
   },
+
   configurationItem: {
     flex: 1,
     gap: 5,
   },
+
   configLabel: {
     fontSize: 10,
     fontWeight: "600",
     letterSpacing: 0.8,
   },
+
   configValue: {
     fontSize: 22,
     fontWeight: "700",
   },
-  setRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 10,
-    paddingVertical: 9,
-  },
+
   setColumn: {
     width: 54,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
+
   inputColumn: {
     flex: 1,
     alignItems: "center",
   },
+
   columnLabel: {
     fontSize: 11,
     fontWeight: "600",
     letterSpacing: 0.5,
     textAlign: "center",
   },
-  setBadge: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-  },
-  setBadgeText: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  inputPlaceholder: {
-    width: "100%",
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderRadius: 8,
-    alignItems: "center",
-  },
+
   lastTime: {
-    fontSize: 11,
-    marginTop: 6,
+    fontSize: 12,
+    marginTop: 4,
   },
+
   setDivider: {
     height: StyleSheet.hairlineWidth,
     marginLeft: 64,
+    marginTop: 5,
+    marginBottom: 5,
   },
-  addSetPlaceholder: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 8,
-    paddingVertical: 13,
-    borderWidth: 1,
-    borderStyle: "dashed",
-    borderRadius: 10,
-    marginTop: 16,
-  },
+
   overviewContent: {
     marginTop: 20,
     gap: 28,
   },
+
   mediaPlaceholder: {
     height: 190,
     borderWidth: 1,
@@ -508,33 +593,40 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
   },
+
   mediaHint: {
     fontSize: 12,
   },
+
   overviewSection: {
     gap: 14,
   },
+
   overviewHeading: {
     fontSize: 17,
     fontWeight: "700",
   },
+
   musclePlaceholder: {
     flexDirection: "row",
     borderWidth: 1,
     borderRadius: 12,
     paddingVertical: 28,
   },
+
   muscleView: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     gap: 10,
   },
+
   exerciseMetadata: {
     flexDirection: "row",
     gap: 10,
     marginTop: 8,
   },
+
   metadataChip: {
     flexDirection: "row",
     alignItems: "center",
@@ -543,6 +635,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
   },
+
   overviewHeader: {
     gap: 14,
   },

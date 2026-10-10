@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import { WorkoutSession, WorkoutExercise, WorkoutExerciseConfig } from "../types/workout";
+import {
+  WorkoutSession,
+  WorkoutExercise,
+  WorkoutExerciseConfig,
+  WorkoutSet,
+} from "../types/workout";
 import * as Crypto from "expo-crypto";
 
 type WorkoutSessionStore = {
@@ -13,6 +18,8 @@ type WorkoutSessionStore = {
     workoutExerciseId: string,
     config: Partial<WorkoutExerciseConfig>,
   ) => void;
+  addSet: (workoutExerciseId: string) => void;
+  ensureExerciseSets: (workoutExerciseId: string) => void;
 };
 
 export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
@@ -72,24 +79,84 @@ export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
       };
     }),
 
-    updateExerciseConfig: (workoutExerciseId, config) =>
-      set((state) => {
-        if (!state.activeSession) return state;
+  updateExerciseConfig: (workoutExerciseId, config) =>
+    set((state) => {
+      if (!state.activeSession) return state;
 
-        return {
-          activeSession : {
-            ...state.activeSession,
-            exercises: state.activeSession.exercises.map((exercise) =>
+      return {
+        activeSession: {
+          ...state.activeSession,
+          exercises: state.activeSession.exercises.map((exercise) =>
             exercise.id === workoutExerciseId
               ? {
-                ...exercise,
-                config : {
-                  ...exercise.config,
-                  ...config,
-                },
-              } :exercise,
+                  ...exercise,
+                  config: {
+                    ...exercise.config,
+                    ...config,
+                  },
+                }
+              : exercise,
           ),
-          },
-        };
-      }),
+        },
+      };
+    }),
+  addSet: (workoutExerciseId) =>
+    set((state) => {
+      if (!state.activeSession) return state;
+
+      return {
+        activeSession: {
+          ...state.activeSession,
+          exercises: state.activeSession.exercises.map((exercise) =>
+            exercise.id === workoutExerciseId
+              ? {
+                  ...exercise,
+                  sets: [
+                    ...exercise.sets,
+                    {
+                      id: Crypto.randomUUID(),
+                      reps: null,
+                      weightKg: null,
+                      durationSeconds: null,
+                    },
+                  ],
+                }
+              : exercise,
+          ),
+        },
+      };
+    }),
+    ensureExerciseSets: (workoutExerciseId) =>
+  set((state) => {
+    if (!state.activeSession) return state;
+
+    return {
+      activeSession: {
+        ...state.activeSession,
+        exercises: state.activeSession.exercises.map((exercise) => {
+          if (exercise.id !== workoutExerciseId) return exercise;
+
+          const target = exercise.config.targetSets ?? 0;
+          const missing = Math.max(0, target - exercise.sets.length);
+
+          if (missing === 0) return exercise;
+
+          const newSets: WorkoutSet[] = Array.from(
+            { length: missing },
+            () => ({
+              id: Crypto.randomUUID(),
+              reps: null,
+              weightKg: null,
+              durationSeconds: null,
+            }),
+          );
+
+          return {
+            ...exercise,
+            sets: [...exercise.sets, ...newSets],
+          };
+        }),
+      },
+    };
+  }),
 }));

@@ -7,7 +7,7 @@ import { exercises } from "@/src/mocks/exercises.mock";
 type WorkoutExerciseTableProps = {
   workoutExercises: WorkoutExercise[];
   onOpenOptions: (workoutExerciseId: string) => void;
-  onNavigate: (exerciseId: string) => void;
+  onNavigate: (exerciseId: string, workoutExerciseId: string) => void;
   onAdd: () => void;
 };
 
@@ -96,7 +96,7 @@ export function WorkoutExerciseTable({
                 styles.exerciseRow,
                 { borderBottomColor: t.colors.border },
               ]}
-              onPress={() => onNavigate(workoutExercise.exerciseId)}
+              onPress={() => onNavigate(workoutExercise.exerciseId, workoutExercise.id)}
             >
               <View style={styles.exerciseColumn}>
                 <View

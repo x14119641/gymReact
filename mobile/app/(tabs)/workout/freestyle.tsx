@@ -33,6 +33,12 @@ export default function FreestyleWorkoutScreen() {
   const removeExercise = useWorkoutSessionStore(
     (state) => state.removeExercise,
   );
+  const updateExerciseConfig = useWorkoutSessionStore(
+    (state) => state.updateExerciseConfig,
+  );
+  const ensureExerciseSets = useWorkoutSessionStore(
+    (state) => state.ensureExerciseSets,
+  );
 
   const today = new Date();
 
@@ -65,10 +71,10 @@ export default function FreestyleWorkoutScreen() {
 
     const config = workoutExercise.config;
 
-    setTargetSets(config.targetSets?.toString() ?? "");
-    setMinReps(config.targetRepsMin?.toString() ?? "");
-    setMaxReps(config.targetRepsMax?.toString() ?? "");
-    setRestSeconds(config.restSeconds?.toString() ?? "");
+    setTargetSets(String(config.targetSets ?? 3));
+    setMinReps(String(config.targetRepsMin ?? 8));
+    setMaxReps(String(config.targetRepsMax ?? 12));
+    setRestSeconds(String(config.restSeconds ?? 120));
 
     setEditingExerciseId(workoutExercise.id);
     setSelectedExerciseId(null);
@@ -100,6 +106,60 @@ export default function FreestyleWorkoutScreen() {
         },
       ],
     );
+  };
+
+  const parseOptionalNumber = (value: string): number | null => {
+    if (value.trim() === "") return null;
+
+    const number = Number(value);
+    return Number.isInteger(number) ? number : null;
+  };
+  const handleSaveConfiguration = () => {
+    const sets = parseOptionalNumber(targetSets);
+    const min = parseOptionalNumber(minReps);
+    const max = parseOptionalNumber(maxReps);
+    const rest = parseOptionalNumber(restSeconds);
+    if (!editingExerciseId) return;
+
+    // Validate required values
+    if (sets === null || min === null || max === null || rest === null) {
+      Alert.alert(
+        "Invalid configuration",
+        "Please enter all configuration values.",
+      );
+      return;
+    }
+    // Validate ranges
+    if (sets < 1 || min < 1 || max < min || rest < 0) {
+      Alert.alert(
+        "Invalid configuration",
+        "Sets and reps must be positive, maximum reps must be at least minimum reps, and rest cannot be negative.",
+      );
+      return;
+    }
+    // Save to Zustand
+    updateExerciseConfig(editingExerciseId, {
+      targetSets: sets,
+      targetRepsMin: min,
+      targetRepsMax: max,
+      restSeconds: rest,
+    });
+
+    // Generate missing sets
+    ensureExerciseSets(editingExerciseId);
+
+    // Temporary debugging
+    const updatedExercise = useWorkoutSessionStore
+      .getState()
+      .activeSession?.exercises.find(
+        (exercise) => exercise.id === editingExerciseId,
+      );
+
+    console.log("Generated sets:", updatedExercise?.sets);
+    console.log("Number of sets:", updatedExercise?.sets.length);
+
+    // Close the modal
+    setEditingExerciseId(null);
   };
 
   return (
@@ -150,10 +210,10 @@ export default function FreestyleWorkoutScreen() {
           <WorkoutExerciseTable
             workoutExercises={workoutExercises}
             onOpenOptions={setSelectedExerciseId}
-            onNavigate={(exerciseId) =>
+            onNavigate={(exerciseId, workoutExerciseId) =>
               router.push({
                 pathname: "/workout/exercise",
-                params: { exerciseId },
+                params: { exerciseId, workoutExerciseId },
               })
             }
             onAdd={() => router.push("/workout/exercise-picker")}
@@ -202,6 +262,15 @@ export default function FreestyleWorkoutScreen() {
       <ExerciseConfigModal
         visible={editingExerciseId !== null}
         onClose={() => setEditingExerciseId(null)}
+        onSave={handleSaveConfiguration}
+        targetSets={targetSets}
+        onTargetSetsChange={setTargetSets}
+        minReps={minReps}
+        onMinRepsChange={setMinReps}
+        maxReps={maxReps}
+        onMaxRepsChange={setMaxReps}
+        restSeconds={restSeconds}
+        onRestSecondsChange={setRestSeconds}
       />
       <ExerciseOptionsModal
         visible={selectedExerciseId !== null}
