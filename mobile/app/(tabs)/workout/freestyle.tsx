@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
 import { exercises } from "@/src/mocks/exercises.mock";
+import { ExerciseOptionsModal } from "@/src/features/workout/components/ExerciseOptionsModal";
 
 export default function FreestyleWorkoutScreen() {
   const t = useTheme();
@@ -30,9 +31,9 @@ export default function FreestyleWorkoutScreen() {
   const removeExercise = useWorkoutSessionStore(
     (state) => state.removeExercise,
   );
-  const updateExerciseConfig = useWorkoutSessionStore(
-    (state) => state.updateExerciseConfig,
-  );
+  // const updateExerciseConfig = useWorkoutSessionStore(
+  //   (state) => state.updateExerciseConfig,
+  // );
 
   const today = new Date();
 
@@ -56,6 +57,51 @@ export default function FreestyleWorkoutScreen() {
   const [maxReps, setMaxReps] = useState("");
   const [restSeconds, setRestSeconds] = useState("");
 
+  const handleEditConfiguration = () => {
+    const workoutExercise = workoutExercises.find(
+      (item) => item.id === selectedExerciseId,
+    );
+
+    if (!workoutExercise) return;
+
+    const config = workoutExercise.config;
+
+    setTargetSets(config.targetSets?.toString() ?? "");
+    setMinReps(config.targetRepsMin?.toString() ?? "");
+    setMaxReps(config.targetRepsMax?.toString() ?? "");
+    setRestSeconds(config.restSeconds?.toString() ?? "");
+
+    setEditingExerciseId(workoutExercise.id);
+    setSelectedExerciseId(null);
+  };
+
+  const handleRemoveExercise = () => {
+    const workoutExerciseId = selectedExerciseId;
+    if (!workoutExerciseId) return;
+
+    const workoutExercise = workoutExercises.find(
+      (item) => item.id === workoutExerciseId,
+    );
+
+    const exerciseTitle = exercises.find(
+      (item) => item.id === workoutExercise?.exerciseId,
+    )?.title;
+
+    setSelectedExerciseId(null);
+
+    Alert.alert(
+      exerciseTitle ?? "Remove exercise",
+      "Remove this exercise from your workout?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: () => removeExercise(workoutExerciseId),
+        },
+      ],
+    );
+  };
   return (
     <BaseLayout>
       <View style={styles.header}>
@@ -311,99 +357,6 @@ export default function FreestyleWorkoutScreen() {
       )}
 
       <Modal
-        visible={selectedExerciseId !== null}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setSelectedExerciseId(null)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setSelectedExerciseId(null)}
-        >
-          <View
-            style={[
-              styles.optionsMenu,
-              {
-                backgroundColor: t.colors.surface,
-                borderColor: t.colors.border,
-              },
-            ]}
-          >
-            <Pressable
-              style={styles.optionRow}
-              onPress={() => {
-                const workoutExercise = workoutExercises.find(
-                  (item) => item.id === selectedExerciseId,
-                );
-
-                if (!workoutExercise) return;
-
-                const config = workoutExercise.config;
-
-                setTargetSets(config.targetSets?.toString() ?? "");
-                setMinReps(config.targetRepsMin?.toString() ?? "");
-                setMaxReps(config.targetRepsMax?.toString() ?? "");
-                setRestSeconds(config.restSeconds?.toString() ?? "");
-
-                setEditingExerciseId(workoutExercise.id);
-                setSelectedExerciseId(null);
-              }}
-            >
-              <Ionicons name="create-outline" size={20} color={t.colors.text} />
-              <Text style={{ color: t.colors.text }}>Edit configuration</Text>
-            </Pressable>
-
-            <Pressable style={styles.optionRow} disabled>
-              <Ionicons
-                name="copy-outline"
-                size={20}
-                color={t.colors.textMuted}
-              />
-              <Text style={{ color: t.colors.textMuted }}>
-                Duplicate exercise (soon)
-              </Text>
-            </Pressable>
-
-            <View style={{ height: 1, backgroundColor: t.colors.border }} />
-
-            <Pressable
-              style={styles.optionRow}
-              onPress={() => {
-                const workoutExerciseId = selectedExerciseId;
-                if (!workoutExerciseId) return;
-
-                const workoutExercise = workoutExercises.find(
-                  (item) => item.id === workoutExerciseId,
-                );
-
-                const exerciseTitle = exercises.find(
-                  (item) => item.id === workoutExercise?.exerciseId,
-                )?.title;
-
-                setSelectedExerciseId(null);
-
-                Alert.alert(
-                  exerciseTitle ?? "Remove exercise",
-                  "Remove this exercise from your workout?",
-                  [
-                    { text: "Cancel", style: "cancel" },
-                    {
-                      text: "Remove",
-                      style: "destructive",
-                      onPress: () => removeExercise(workoutExerciseId),
-                    },
-                  ],
-                );
-              }}
-            >
-              <Ionicons name="trash-outline" size={20} color="#E35D5D" />
-              <Text style={{ color: "#E35D5D" }}>Remove exercise</Text>
-            </Pressable>
-          </View>
-        </Pressable>
-      </Modal>
-
-      <Modal
         visible={editingExerciseId !== null}
         transparent
         animationType="fade"
@@ -437,6 +390,13 @@ export default function FreestyleWorkoutScreen() {
           </View>
         </View>
       </Modal>
+
+      <ExerciseOptionsModal
+        visible={selectedExerciseId !== null}
+        onClose={() => setSelectedExerciseId(null)}
+        onEditConfiguration={handleEditConfiguration}
+        onRemove={handleRemoveExercise}
+      />
     </BaseLayout>
   );
 }
@@ -603,11 +563,4 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
 
-  optionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 14,
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
 });
