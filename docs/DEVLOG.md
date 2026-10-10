@@ -1,6 +1,66 @@
 # Dev Log
 
-## 2026-10-08
+## 2026-10-10
+
+- Continued working on the Freestyle Workout. Spent most of the day getting the workout session, exercise configuration and set tracking working together.
+
+- **Workout session and Zustand**
+  - Added Zustand to manage the active workout.
+  - Created the types for `WorkoutSession`, `WorkoutExercise` and `WorkoutSet`.
+  - Implemented starting a workout, adding exercises and removing them.
+  - Connected the Exercise Picker so multiple exercises can be added to the current session.
+  - Fixed an issue with `crypto.randomUUID()` on Android by using `expo-crypto`.
+  - Everything is still stored in memory. No database or permanent storage yet.
+
+- **Freestyle Workout screen**
+  - Replaced the old exercise cards with a table showing Exercise, Sets, Reps and Rest.
+  - Added a small image placeholder for each exercise.
+  - Added a three-dot menu to remove exercises or edit their configuration.
+  - Added confirmation before removing an exercise.
+  - Kept the Add Exercise button below the list.
+  - Added a Complete Workout button.
+
+- **Exercise configuration**
+  - Created an exercise type and added default configurations to the mock exercise catalog.
+  - Exercises now have default sets, repetition ranges and rest times.
+  - Added an `ExerciseConfigModal` to edit those values during a workout.
+  - Connected the configuration to Zustand, so changes are reflected in the Freestyle table and exercise detail screen.
+  - Kept the catalog defaults separate from the active workout configuration.
+  - Made sure changing the target number of sets doesn't delete sets that have already been logged.
+  - Also handled adding the same exercise more than once to a workout.
+
+- **Logging sets**
+  - Started implementing actual set tracking in the exercise detail screen.
+  - Added editable repetitions and weight for individual sets.
+  - Repetitions use whole numbers, while weights support decimals with either a comma or a dot.
+  - Added the store actions needed to update sets and create additional ones.
+  - Tested changing exercise configurations and logging values. Everything seems to stay synchronized.
+  - Duration-based exercises, such as planks, will need slightly different inputs later.
+
+- **Workout notes and completion**
+  - Connected the Notes tab to Zustand. Notes are updated as you type, without needing a Save button.
+  - Made the Complete Workout button appear only on the Exercises tab.
+  - Created a separate `WorkoutCompletionModal` component.
+  - Added an optional difficulty rating: Easy, Moderate, Hard or Maximum effort.
+  - The modal also allows adding or reviewing workout notes.
+  - Added Cancel, Skip and Continue actions.
+  - Tested the modal and notes synchronization.
+  - Completing a workout is not functional yet. The modal currently closes without saving or clearing the session.
+
+- **Testing**
+  - Tested adding and removing exercises, editing configurations and logging sets in the Android emulator.
+  - Checked that changing the target sets doesn't remove previously entered values.
+  - Tested the completion modal and the Notes tab.
+  - So far, the main workout flow seems to be working as expected.
+
+- **Next**
+  - Implement the actual `completeWorkout()` action in Zustand.
+  - Create a workout summary screen.
+  - Connect the completion modal to the summary without losing the workout data.
+  - Add local persistence and workout history.
+  - Later, connect everything to the FastAPI backend and PostgreSQL.
+  - Add proper tracking for duration-based exercises.
+  - Review the remaining small UI issues and cleanup tasks.
 
 - Continued working on the Freestyle Workout
   - Started implementing the active Workout Session
