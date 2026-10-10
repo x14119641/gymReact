@@ -13,6 +13,8 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 type ExercisePickerRowProps = {
   image?: ImageSourcePropType;
   title: string;
+  isSelected: boolean;
+  isAdded: boolean;
   onPress?: () => void;
   onAddPress?: () => void;
 };
@@ -20,11 +22,12 @@ type ExercisePickerRowProps = {
 export function ExercisePickerRow({
   image,
   title,
+  isSelected,
+  isAdded,
   onPress,
   onAddPress,
 }: ExercisePickerRowProps) {
   const t = useTheme();
-
 
   const styles = useMemo(() => {
     return StyleSheet.create({
@@ -84,7 +87,11 @@ export function ExercisePickerRow({
 
   return (
     <View style={styles.container}>
-      <Pressable style={styles.exerciseInfo} onPress={onPress} disabled={!onPress}>
+      <Pressable
+        style={styles.exerciseInfo}
+        onPress={onPress}
+        disabled={!onPress}
+      >
         {image ? (
           <Image source={image} style={styles.image} resizeMode="contain" />
         ) : (
@@ -101,7 +108,17 @@ export function ExercisePickerRow({
         onPress={onAddPress}
         disabled={!onAddPress}
       >
-        <Ionicons name="add-outline" size={20} color={t.colors.primary} />
+        <Ionicons
+          name={
+            isAdded
+              ? "checkmark-done-outline"
+              : isSelected
+                ? "checkmark-circle"
+                : "add-outline"
+          }
+          size={20}
+          color={t.colors.primary}
+        />
       </Pressable>
     </View>
   );

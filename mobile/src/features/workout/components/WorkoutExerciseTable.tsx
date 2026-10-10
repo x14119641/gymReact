@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, Pressable } from "react-native";
+import { View, StyleSheet, Text, Pressable, FlatList } from "react-native";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { WorkoutExercise } from "@/src/types/workout";
@@ -7,7 +7,7 @@ import { exercises } from "@/src/mocks/exercises.mock";
 type WorkoutExerciseTableProps = {
   workoutExercises: WorkoutExercise[];
   onOpenOptions: (workoutExerciseId: string) => void;
-  onNavigate: (workoutExerciseId: string) => void;
+  onNavigate: (exerciseId: string) => void;
   onAdd: () => void;
 };
 
@@ -64,104 +64,112 @@ export function WorkoutExerciseTable({
         </View>
       )}
 
-      {workoutExercises.map((workoutExercise) => {
-        const exercise = exercises.find(
-          (item) => item.id === workoutExercise.exerciseId,
-        );
+      <FlatList
+        data={workoutExercises}
+        style={styles.exerciseList}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator
+        renderItem={({ item: workoutExercise }) => {
+          const exercise = exercises.find(
+            (item) => item.id === workoutExercise.exerciseId,
+          );
 
-        if (!exercise) return null;
+          if (!exercise) return null;
 
-        const config = workoutExercise.config;
+          const config = workoutExercise.config;
 
-        const reps =
-          config.targetRepsMin != null && config.targetRepsMax != null
-            ? `${config.targetRepsMin}–${config.targetRepsMax}`
-            : "—";
+          const reps =
+            config.targetRepsMin != null && config.targetRepsMax != null
+              ? `${config.targetRepsMin}–${config.targetRepsMax}`
+              : "—";
 
-        const rest =
-          config.restSeconds != null
-            ? `${Math.floor(config.restSeconds / 60)}:${String(
-                config.restSeconds % 60,
-              ).padStart(2, "0")}`
-            : "—";
+          const rest =
+            config.restSeconds != null
+              ? `${Math.floor(config.restSeconds / 60)}:${String(
+                  config.restSeconds % 60,
+                ).padStart(2, "0")}`
+              : "—";
 
-        return (
-          <Pressable
-            key={workoutExercise.id}
-            style={[styles.exerciseRow, { borderBottomColor: t.colors.border }]}
-            onPress={() => onNavigate(workoutExercise.id)}
-          >
-            <View style={styles.exerciseColumn}>
-              <View
-                style={[
-                  styles.exerciseThumbnail,
-                  {
-                    backgroundColor: t.colors.surface,
-                    borderColor: t.colors.border,
-                  },
-                ]}
-              >
-                <Ionicons
-                  name="barbell-outline"
-                  size={24}
-                  color={t.colors.textMuted}
-                />
+          return (
+            <Pressable
+              style={[
+                styles.exerciseRow,
+                { borderBottomColor: t.colors.border },
+              ]}
+              onPress={() => onNavigate(workoutExercise.exerciseId)}
+            >
+              <View style={styles.exerciseColumn}>
+                <View
+                  style={[
+                    styles.exerciseThumbnail,
+                    {
+                      backgroundColor: t.colors.surface,
+                      borderColor: t.colors.border,
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name="barbell-outline"
+                    size={24}
+                    color={t.colors.textMuted}
+                  />
+                </View>
+
+                <Text
+                  style={[styles.exerciseName, { color: t.colors.text }]}
+                  numberOfLines={2}
+                >
+                  {exercise.title}
+                </Text>
               </View>
 
               <Text
-                style={[styles.exerciseName, { color: t.colors.text }]}
-                numberOfLines={2}
+                style={[
+                  styles.setsColumn,
+                  styles.cellText,
+                  { color: t.colors.text },
+                ]}
               >
-                {exercise.title}
+                {config.targetSets ?? "—"}
               </Text>
-            </View>
 
-            <Text
-              style={[
-                styles.setsColumn,
-                styles.cellText,
-                { color: t.colors.text },
-              ]}
-            >
-              {config.targetSets ?? "—"}
-            </Text>
+              <Text
+                style={[
+                  styles.repsColumn,
+                  styles.cellText,
+                  { color: t.colors.text },
+                ]}
+              >
+                {reps}
+              </Text>
 
-            <Text
-              style={[
-                styles.repsColumn,
-                styles.cellText,
-                { color: t.colors.text },
-              ]}
-            >
-              {reps}
-            </Text>
+              <Text
+                style={[
+                  styles.restColumn,
+                  styles.cellText,
+                  { color: t.colors.text },
+                ]}
+              >
+                {rest}
+              </Text>
 
-            <Text
-              style={[
-                styles.restColumn,
-                styles.cellText,
-                { color: t.colors.text },
-              ]}
-            >
-              {rest}
-            </Text>
-
-            <Pressable
-              style={styles.menuColumn}
-              onPress={(event) => {
-                event.stopPropagation();
-                onOpenOptions(workoutExercise.id);
-              }}
-            >
-              <Ionicons
-                name="ellipsis-vertical"
-                size={18}
-                color={t.colors.textMuted}
-              />
+              <Pressable
+                style={styles.menuColumn}
+                onPress={(event) => {
+                  event.stopPropagation();
+                  onOpenOptions(workoutExercise.id);
+                }}
+              >
+                <Ionicons
+                  name="ellipsis-vertical"
+                  size={18}
+                  color={t.colors.textMuted}
+                />
+              </Pressable>
             </Pressable>
-          </Pressable>
-        );
-      })}
+          );
+        }}
+      />
       <Pressable
         style={({ pressed }) => [
           styles.addBtn,
@@ -184,9 +192,13 @@ export function WorkoutExerciseTable({
 
 const styles = StyleSheet.create({
   exerciseTable: {
+    flex: 1,
+    minHeight: 0,
     marginTop: 12,
   },
-
+  exerciseList: {
+    flex: 1,
+  },
   tableHeader: {
     flexDirection: "row",
     alignItems: "center",

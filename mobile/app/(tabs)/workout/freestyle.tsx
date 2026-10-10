@@ -5,6 +5,7 @@ import {
   Pressable,
   TextInput,
   Alert,
+  ScrollView,
 } from "react-native";
 import { BaseLayout } from "@/src/components/BaseLayout";
 import { useTheme } from "@/src/theme/ThemeProvider";
@@ -227,6 +228,8 @@ const styles = StyleSheet.create({
   },
 
   workoutContent: {
+    flex: 1,
+    minHeight: 0,
     marginTop: 10,
   },
   tabBar: {

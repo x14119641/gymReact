@@ -42,6 +42,9 @@ export default function ExercisePickerScreen() {
   const router = useRouter();
 
   const addExercise = useWorkoutSessionStore((state) => state.addExercise);
+  const activeSession = useWorkoutSessionStore((state) => state.activeSession);
+  const workoutExercises = activeSession?.exercises ?? [];
+
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<string[]>([]);
 
   const [search, setSearch] = useState("");
@@ -168,6 +171,8 @@ export default function ExercisePickerScreen() {
         renderItem={({ item }) => (
           <ExercisePickerRow
             title={item.title}
+            isSelected={selectedExerciseIds.includes(item.id)}
+            isAdded={workoutExercises.some((workoutExercise) => workoutExercise.exerciseId ===item.id)}
             onPress={() =>
               router.push({
                 pathname: "/workout/exercise",
