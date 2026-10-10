@@ -7,7 +7,7 @@ import {
   Pressable,
 } from "react-native";
 import { useMemo } from "react";
-import { useTheme } from "../theme/ThemeProvider";
+import { useTheme } from "../../../theme/ThemeProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 type ExercisePickerRowProps = {

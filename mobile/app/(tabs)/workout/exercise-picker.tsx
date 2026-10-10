@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { BaseLayout } from "@/src/components/BaseLayout";
 import { useTheme } from "@/src/theme/ThemeProvider";
-import { ExercisePickerRow } from "@/src/components/ExercisePickerRow";
+import { ExercisePickerRow } from "@/src/features/workout/components/ExercisePickerRow";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
