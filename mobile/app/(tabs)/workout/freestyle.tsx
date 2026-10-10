@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
 import { exercises } from "@/src/mocks/exercises.mock";
 import { ExerciseOptionsModal } from "@/src/features/workout/components/ExerciseOptionsModal";
+import { ExerciseConfigModal } from "@/src/features/workout/components/ExerciseConfigModal";
 
 export default function FreestyleWorkoutScreen() {
   const t = useTheme();
@@ -356,41 +357,11 @@ export default function FreestyleWorkoutScreen() {
         </View>
       )}
 
-      <Modal
+      
+      <ExerciseConfigModal 
         visible={editingExerciseId !== null}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setEditingExerciseId(null)}
-      >
-        <View style={styles.modalOverlay}>
-          <View
-            style={[
-              styles.optionsMenu,
-              {
-                backgroundColor: t.colors.surface,
-                borderColor: t.colors.border,
-                padding: 20,
-                gap: 16,
-              },
-            ]}
-          >
-            <Text
-              style={{ color: t.colors.text, fontSize: 18, fontWeight: "700" }}
-            >
-              Edit configuration
-            </Text>
-
-            <Text style={{ color: t.colors.textMuted }}>
-              Configuration form coming next.
-            </Text>
-
-            <Pressable onPress={() => setEditingExerciseId(null)}>
-              <Text style={{ color: t.colors.primary }}>Cancel</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
+        onClose={() => setEditingExerciseId(null)}
+      />
       <ExerciseOptionsModal
         visible={selectedExerciseId !== null}
         onClose={() => setSelectedExerciseId(null)}
