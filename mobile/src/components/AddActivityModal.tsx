@@ -1,7 +1,6 @@
 import { Modal, Pressable, View, Text, StyleSheet } from "react-native";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useWorkoutSessionStore } from "../store/workoutSessionStore";
 
 type Props = {
   visible: boolean;
@@ -22,7 +21,6 @@ export function AddActivityModal({
     month: "long",
   });
 
-  const startWorkout = useWorkoutSessionStore((state) => state.startWorkout);
 
   return (
     <Modal
@@ -48,10 +46,7 @@ export function AddActivityModal({
           <View style={styles.options}>
             {/* Freestyle workout */}
             <Pressable
-              onPress={() => {
-                startWorkout();
-                onFreestylePress();
-              }}
+              onPress={onFreestylePress}
               style={[
                 styles.optionRow,
                 {

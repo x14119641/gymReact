@@ -8,6 +8,8 @@ import { userProfileRecord } from "@/src/store/profile";
 import WeekDays from "@/src/components/WeekDays";
 import HeroStatsCard from "@/src/components/HeroStatsCard";
 import { AddActivityModal } from "@/src/components/AddActivityModal";
+import { useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
+
 
 export default function HomeScreen() {
   const t = useTheme();
@@ -15,6 +17,7 @@ export default function HomeScreen() {
   const accessToken = useAuth((s) => s.accessToken);
   const user = useAuth((s) => s.user);
   const status = userProfileRecord((s) => s.status);
+  const startWorkout = useWorkoutSessionStore((s) => s.startWorkout);
   const [addMenuVisible, setAddMenuVisible] = useState(false);
 
   // load profile once when logged in
@@ -72,6 +75,7 @@ export default function HomeScreen() {
         visible={addMenuVisible}
         onClose={() => setAddMenuVisible(false)}
         onFreestylePress={() => {
+          startWorkout();
           setAddMenuVisible(false);
           router.push("/workout/freestyle");
         }}
