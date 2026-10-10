@@ -1,4 +1,11 @@
-import { Text, View, StyleSheet, Pressable, FlatList } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Pressable,
+  FlatList,
+  TextInput,
+} from "react-native";
 import { BaseLayout } from "@/src/components/BaseLayout";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -6,6 +13,53 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { exercises } from "@/src/mocks/exercises.mock";
 import { useState } from "react";
 import { useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
+
+type WeightInputProps = {
+  value: number | null;
+  onChange: (value: number | null) => void;
+  textColor: string;
+  placeholderColor: string;
+};
+
+function WeightInput({
+  value,
+  onChange,
+  textColor,
+  placeholderColor,
+}: WeightInputProps) {
+  const [text, setText] = useState(value == null ? "" : String(value));
+
+  const handleChange = (input: string) => {
+    const normalized = input.replace(",", ".");
+
+    if (!/^\d*(\.\d*)?$/.test(normalized)) return;
+
+    setText(input);
+
+    onChange(
+      normalized === "" || normalized === "." ? null : Number(normalized),
+    );
+  };
+
+  return (
+    <TextInput
+      value={text}
+      onChangeText={handleChange}
+      onBlur={() => setText(value == null ? "" : String(value))}
+      keyboardType="decimal-pad"
+      placeholder="—"
+      placeholderTextColor={placeholderColor}
+      style={{
+        width: "100%",
+        height: "100%",
+        textAlign: "center",
+        color: textColor,
+        fontSize: 16,
+        fontWeight: "600",
+      }}
+    />
+  );
+}
 
 export default function ExerciseScreen() {
   const t = useTheme();
@@ -27,6 +81,7 @@ export default function ExerciseScreen() {
   );
 
   const workoutSets = workoutExercise?.sets ?? [];
+  const updateSet = useWorkoutSessionStore((state) => state.updateSet);
 
   const [activeTab, setActiveTab] = useState<"exercise" | "overview">(
     "exercise",
@@ -275,12 +330,39 @@ export default function ExerciseScreen() {
                       },
                     ]}
                   >
-                    <Text style={{ color: t.colors.textMuted }}>
-                      {workoutExercise?.config.targetRepsMin != null &&
-                      workoutExercise?.config.targetRepsMax != null
-                        ? `${workoutExercise.config.targetRepsMin}–${workoutExercise.config.targetRepsMax}`
-                        : "—"}
-                    </Text>
+                    <TextInput
+                      value={set.reps != null ? String(set.reps) : ""}
+                      onChangeText={(value) => {
+                        if (value.trim() === "") {
+                          updateSet(workoutExercise!.id, set.id, {
+                            reps: null,
+                          });
+                          return;
+                        }
+
+                        if (!/^\d+$/.test(value)) return;
+
+                        updateSet(workoutExercise!.id, set.id, {
+                          reps: Number(value),
+                        });
+                      }}
+                      keyboardType="number-pad"
+                      placeholder={
+                        workoutExercise?.config.targetRepsMin != null &&
+                        workoutExercise?.config.targetRepsMax != null
+                          ? `${workoutExercise.config.targetRepsMin}–${workoutExercise.config.targetRepsMax}`
+                          : "—"
+                      }
+                      placeholderTextColor={t.colors.textMuted}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        textAlign: "center",
+                        color: t.colors.text,
+                        fontSize: 16,
+                        fontWeight: "600",
+                      }}
+                    />
                   </View>
                   <Text
                     style={[styles.lastTime, { color: t.colors.textMuted }]}
@@ -298,7 +380,16 @@ export default function ExerciseScreen() {
                       },
                     ]}
                   >
-                    <Text style={{ color: t.colors.textMuted }}>—</Text>
+                    <WeightInput
+                      value={set.weightKg}
+                      onChange={(weightKg) => {
+                        if (!workoutExerciseId) return;
+
+                        updateSet(workoutExerciseId, set.id, { weightKg });
+                      }}
+                      textColor={t.colors.text}
+                      placeholderColor={t.colors.textMuted}
+                    />
                   </View>
                   <Text
                     style={[styles.lastTime, { color: t.colors.textMuted }]}

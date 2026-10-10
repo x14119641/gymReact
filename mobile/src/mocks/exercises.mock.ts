@@ -1,4 +1,21 @@
-export const exercises = [
+import type { Exercise, ExerciseTrackingType } from "../types/exercise";
+import type { WorkoutExerciseConfig } from "../types/workout";
+
+const DEFAULT_REPS_CONFIG: WorkoutExerciseConfig = {
+  targetSets: 3,
+  targetRepsMin: 8,
+  targetRepsMax: 12,
+  restSeconds: 90,
+};
+
+const DEFAULT_DURATION_CONFIG: WorkoutExerciseConfig = {
+  targetSets: 3,
+  targetRepsMin: null,
+  targetRepsMax: null,
+  restSeconds: 60,
+};
+
+const exerciseCatalog = [
   // Chest
   {
     id: "bench-press",
@@ -265,3 +282,18 @@ export const exercises = [
     equipment: "Other",
   },
 ];
+
+export const exercises: Exercise[] = exerciseCatalog.map((exercise) => {
+  const trackingType: ExerciseTrackingType =
+    exercise.id === "plank" ? "duration" : "reps";
+
+  return {
+    ...exercise,
+    trackingType,
+    defaultConfig: {
+      ...(trackingType === "duration"
+        ? DEFAULT_DURATION_CONFIG
+        : DEFAULT_REPS_CONFIG),
+    },
+  };
+});

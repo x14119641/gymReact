@@ -71,10 +71,10 @@ export default function FreestyleWorkoutScreen() {
 
     const config = workoutExercise.config;
 
-    setTargetSets(String(config.targetSets ?? 3));
-    setMinReps(String(config.targetRepsMin ?? 8));
-    setMaxReps(String(config.targetRepsMax ?? 12));
-    setRestSeconds(String(config.restSeconds ?? 120));
+    setTargetSets(config.targetSets?.toString() ?? "");
+    setMinReps(config.targetRepsMin?.toString() ?? "");
+    setMaxReps(config.targetRepsMax?.toString() ?? "");
+    setRestSeconds(config.restSeconds?.toString() ?? "");
 
     setEditingExerciseId(workoutExercise.id);
     setSelectedExerciseId(null);

@@ -6,6 +6,7 @@ import {
   WorkoutSet,
 } from "../types/workout";
 import * as Crypto from "expo-crypto";
+import { exercises } from "../mocks/exercises.mock";
 
 type WorkoutSessionStore = {
   activeSession: WorkoutSession | null;
@@ -20,6 +21,11 @@ type WorkoutSessionStore = {
   ) => void;
   addSet: (workoutExerciseId: string) => void;
   ensureExerciseSets: (workoutExerciseId: string) => void;
+  updateSet: (
+    workoutExerciseId: string,
+    setId: string,
+    patch: Partial<Pick<WorkoutSet, "reps" | "weightKg" | "durationSeconds">>,
+  ) => void;
 };
 
 export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
@@ -45,16 +51,31 @@ export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
     set((state) => {
       if (!state.activeSession) return state;
 
+      const catalogExercise = exercises.find(
+        (exercise) => exercise.id === exerciseId,
+      );
+
+      if (!catalogExercise) return state;
+
+      const config: WorkoutExerciseConfig = {
+        ...catalogExercise.defaultConfig,
+      };
+
+      const initialSets: WorkoutSet[] = Array.from(
+        { length: config.targetSets ?? 0 },
+        () => ({
+          id: Crypto.randomUUID(),
+          reps: null,
+          weightKg: null,
+          durationSeconds: null,
+        }),
+      );
+
       const workoutExercise: WorkoutExercise = {
         id: Crypto.randomUUID(),
         exerciseId,
-        config: {
-          targetSets: null,
-          targetRepsMin: null,
-          targetRepsMax: null,
-          restSeconds: null,
-        },
-        sets: [],
+        config,
+        sets: initialSets,
       };
 
       return {
@@ -126,37 +147,59 @@ export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
         },
       };
     }),
-    ensureExerciseSets: (workoutExerciseId) =>
-  set((state) => {
-    if (!state.activeSession) return state;
+  ensureExerciseSets: (workoutExerciseId) =>
+    set((state) => {
+      if (!state.activeSession) return state;
 
-    return {
-      activeSession: {
-        ...state.activeSession,
-        exercises: state.activeSession.exercises.map((exercise) => {
-          if (exercise.id !== workoutExerciseId) return exercise;
+      return {
+        activeSession: {
+          ...state.activeSession,
+          exercises: state.activeSession.exercises.map((exercise) => {
+            if (exercise.id !== workoutExerciseId) return exercise;
 
-          const target = exercise.config.targetSets ?? 0;
-          const missing = Math.max(0, target - exercise.sets.length);
+            const target = exercise.config.targetSets ?? 0;
+            const missing = Math.max(0, target - exercise.sets.length);
 
-          if (missing === 0) return exercise;
+            if (missing === 0) return exercise;
 
-          const newSets: WorkoutSet[] = Array.from(
-            { length: missing },
-            () => ({
-              id: Crypto.randomUUID(),
-              reps: null,
-              weightKg: null,
-              durationSeconds: null,
-            }),
-          );
+            const newSets: WorkoutSet[] = Array.from(
+              { length: missing },
+              () => ({
+                id: Crypto.randomUUID(),
+                reps: null,
+                weightKg: null,
+                durationSeconds: null,
+              }),
+            );
 
-          return {
-            ...exercise,
-            sets: [...exercise.sets, ...newSets],
-          };
-        }),
-      },
-    };
-  }),
+            return {
+              ...exercise,
+              sets: [...exercise.sets, ...newSets],
+            };
+          }),
+        },
+      };
+    }),
+  updateSet: (workoutExerciseId, setId, patch) =>
+    set((state) => {
+      if (!state.activeSession) return state;
+
+      return {
+        activeSession: {
+          ...state.activeSession,
+          exercises: state.activeSession.exercises.map((exercise) =>
+            exercise.id === workoutExerciseId
+              ? {
+                  ...exercise,
+                  sets: exercise.sets.map((workoutSet) =>
+                    workoutSet.id === setId
+                      ? { ...workoutSet, ...patch }
+                      : workoutSet,
+                  ),
+                }
+              : exercise,
+          ),
+        },
+      };
+    }),
 }));
