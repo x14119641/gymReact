@@ -1,5 +1,53 @@
 # Dev Log
 
+## 2026-11-09
+
+- Continued working on the Freestyle Workout, focusing on how workout sessions should be stored and managed.
+- Reviewed the existing implementation and organized the remaining development into milestones in `docs/ROADMAP.md`.
+- Decided to move away from the original model of storing only one active and one completed workout.
+
+### Workout architecture
+
+- Clarified the difference between Workout Sessions, reusable Routines and Exercises.
+- A Workout Session represents an actual training session, while a Routine will be a reusable template.
+- Decided that completed workouts should remain editable, including the ability to add or modify sets.
+- Workouts will eventually appear on Home, associated with the selected date, showing whether they are completed or still in progress.
+- Completing a workout should return to Home rather than opening a separate summary screen.
+- Workout Sessions will have their own Overview, with a name, optional instructions, muscles worked and other session information.
+- Exercises will have their own Overview and History, building on the existing exercise detail page.
+- Decided to implement local persistence before connecting workout data to FastAPI.
+
+### M1 — Workout Session Data Model
+
+- Extended `WorkoutSession` with a name, optional instructions, completion timestamp and effort rating.
+- Moved the effort rating into the shared workout types, using a 1–7 scale.
+- Updated Zustand to support multiple workout sessions without overwriting previous ones.
+- Kept `activeSession` for the workout currently being edited, while storing previous sessions in a separate `sessions` collection.
+- Added `openWorkout(sessionId)` to reopen an existing session and `updateName()` to rename it.
+- Updated the Freestyle Workout, Exercise Picker, exercise screen and Workout Completion Modal to work with the updated session model.
+- Kept the existing exercise configurations and logged sets independent for each workout.
+- Continued using in-memory state for now, without permanent storage.
+
+### Testing
+
+- Verified that completing a workout and starting another creates a new, empty session.
+- Confirmed that completed and unfinished workouts can coexist in the store.
+- Checked that previous sessions retain their exercise configurations, set IDs, repetitions and weights.
+- Confirmed that completing a workout no longer overwrites earlier sessions.
+- `openWorkout()` and `updateName()` are implemented, but their user-facing behavior still needs testing once the corresponding controls are added.
+- Switching between sessions and editing completed workouts still need further verification.
+
+### Next — M2: Workout Session Lifecycle
+
+- Review and test `openWorkout()`, especially when switching between unfinished and completed sessions.
+- Add a way to reopen existing workouts.
+- Allow users to edit completed workouts without changing their completion timestamp.
+- Connect workout completion to navigation back to Home.
+- Review the exercise Done button and navigation behavior.
+- Test switching between multiple sessions without losing or duplicating data.
+- Continue with Home integration and local persistence in the following milestones.
+- Keep the remaining frontend cleanup tasks for later, before backend integration.
+
 ## 2026-10-10
 
 - Continued working on the Freestyle Workout. Spent most of the day getting the workout session, exercise configuration and set tracking working together.
