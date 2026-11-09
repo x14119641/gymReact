@@ -4,27 +4,22 @@ import {
   WorkoutExercise,
   WorkoutExerciseConfig,
   WorkoutSet,
+  WorkoutEffortType,
 } from "../types/workout";
 import * as Crypto from "expo-crypto";
 import { exercises } from "../mocks/exercises.mock";
 
-
-export type WorkoutEffort = "easy" | "moderate" | "hard" | "maximum";
-
-export type CompletedWorkoutSession = WorkoutSession & {
-  completedAt: string;
-  effort: WorkoutEffort | null;
-};
-
 type WorkoutSessionStore = {
   activeSession: WorkoutSession | null;
-  completedSession: CompletedWorkoutSession | null;
+  sessions: WorkoutSession[];
 
-  completeWorkout: (effort: WorkoutEffort | null) => void;
+  completeWorkout: (effort: WorkoutEffortType | null) => void;
 
   startWorkout: () => void;
+  openWorkout: (sessionId: string) => void;
   resetWorkout: () => void;
   updateNotes: (notes: string) => void;
+  updateName: (name: string) => void;
   addExercise: (exerciseId: string) => void;
   removeExercise: (WorkoutExerciseId: string) => void;
   updateExerciseConfig: (
@@ -40,34 +35,68 @@ type WorkoutSessionStore = {
   ) => void;
 };
 
+export const selectActiveSession = (state: WorkoutSessionStore) =>
+  state.activeSession;
+
 export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
   activeSession: null,
-  completedSession: null,
-
-  resetWorkout: () => set({ activeSession: null }),
-
-  updateNotes: (notes) =>
-  set((state) => {
-    if (!state.activeSession) return state;
-
-    return {
-      activeSession: {
-        ...state.activeSession,
-        notes,
-      },
-    };
-  }),
-
-  startWorkout: () =>
+  sessions: [],
+  openWorkout: (sessionId) =>
     set((state) => {
-      if (state.activeSession) return state;
+      const selectedSession = state.sessions.find(
+        (session) => session.id === sessionId,
+      );
+
+      if (!selectedSession) return state;
+
+      return {
+        activeSession: selectedSession,
+        sessions: [
+          ...state.sessions.filter((session) => session.id !== sessionId),
+          ...(state.activeSession ? [state.activeSession] : []),
+        ],
+      };
+    }),
+
+  resetWorkout: () => set({ activeSession: null, sessions: [] }),
+  updateName: (name) =>
+    set((state) => {
+      if (!state.activeSession) return state;
 
       return {
         activeSession: {
+          ...state.activeSession,
+          name,
+        },
+      };
+    }),
+  updateNotes: (notes) =>
+    set((state) => {
+      if (!state.activeSession) return state;
+
+      return {
+        activeSession: {
+          ...state.activeSession,
+          notes,
+        },
+      };
+    }),
+
+  startWorkout: () =>
+    set((state) => {
+      return {
+        sessions: state.activeSession
+          ? [...state.sessions, state.activeSession]
+          : state.sessions,
+        activeSession: {
           id: Crypto.randomUUID(),
+          name: "Freestyle Session",
+          instructions: null,
           startedAt: new Date().toISOString(),
           exercises: [],
           notes: "",
+          effort: null,
+          completedAt: null,
         },
       };
     }),
@@ -228,21 +257,23 @@ export const useWorkoutSessionStore = create<WorkoutSessionStore>((set) => ({
       };
     }),
 
-    completeWorkout: (effort) =>
-  set((state) => {
-    const session = state.activeSession;
+  completeWorkout: (effort) =>
+    set((state) => {
+      const session = state.activeSession;
 
-    if (!session || session.exercises.length === 0) {
-      return state;
-    }
+      if (!session || session.exercises.length === 0) {
+        return state;
+      }
 
-    return {
-      completedSession: {
+      const completedSession: WorkoutSession = {
         ...session,
         completedAt: new Date().toISOString(),
         effort,
-      },
-      activeSession: null,
-    };
-  }),
+      };
+
+      return {
+        sessions: [...state.sessions, completedSession],
+        activeSession: null,
+      };
+    }),
 }));

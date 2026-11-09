@@ -14,7 +14,10 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { exercises } from "@/src/mocks/exercises.mock";
 import { FilterSelectModal } from "@/src/components/FilterSelectModal";
-import { useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
+import {
+  useWorkoutSessionStore,
+  selectActiveSession,
+} from "@/src/store/workoutSessionStore";
 
 const muscles = [
   "Chest",
@@ -42,7 +45,7 @@ export default function ExercisePickerScreen() {
   const router = useRouter();
 
   const addExercise = useWorkoutSessionStore((state) => state.addExercise);
-  const activeSession = useWorkoutSessionStore((state) => state.activeSession);
+  const activeSession = useWorkoutSessionStore(selectActiveSession);
   const workoutExercises = activeSession?.exercises ?? [];
 
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<string[]>([]);
@@ -172,7 +175,9 @@ export default function ExercisePickerScreen() {
           <ExercisePickerRow
             title={item.title}
             isSelected={selectedExerciseIds.includes(item.id)}
-            isAdded={workoutExercises.some((workoutExercise) => workoutExercise.exerciseId ===item.id)}
+            isAdded={workoutExercises.some(
+              (workoutExercise) => workoutExercise.exerciseId === item.id,
+            )}
             onPress={() =>
               router.push({
                 pathname: "/workout/exercise",

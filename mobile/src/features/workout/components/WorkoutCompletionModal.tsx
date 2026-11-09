@@ -6,19 +6,26 @@ import {
   TextInput,
   Modal,
 } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTheme } from "@/src/theme/ThemeProvider";
-import { useState } from "react";
+import React, { useState } from "react";
+import { WorkoutEffortType } from "@/src/types/workout";
 
-
-export type WorkoutEffort = "easy" | "moderate" | "hard" | "maximum";
+const effortLabels: Record<WorkoutEffortType, string> = {
+  1: "Very easy",
+  2: "Easy",
+  3: "Somewhat easy",
+  4: "Moderate",
+  5: "Somewhat hard",
+  6: "Very hard",
+  7: "Maximum effort",
+};
 
 type WorkoutCompletionModalProps = {
   visible: boolean;
   notes: string;
   onNotesChange: (notes: string) => void;
   onClose: () => void;
-  onSave: (effort: WorkoutEffort | null) => void;
+  onSave: (effort: WorkoutEffortType | null) => void;
   onSkip: () => void;
 };
 
@@ -32,8 +39,20 @@ export function WorkoutCompletionModal({
 }: WorkoutCompletionModalProps) {
   const t = useTheme();
 
-  const [workoutEffort, setWorkoutEffort] =
-    useState<WorkoutEffort | null>(null);
+  const effortColors: Record<WorkoutEffortType, string> = {
+    1: t.colors.success,
+    2: t.colors.success,
+    3: t.colors.success,
+    4: t.colors.primary,
+    5: t.colors.warning,
+    6: t.colors.warning,
+    7: t.colors.danger,
+  };
+
+  const [workoutEffort, setWorkoutEffort] = useState<WorkoutEffortType | null>(
+    null,
+  );
+
 
   return (
     <Modal
@@ -57,39 +76,49 @@ export function WorkoutCompletionModal({
             How difficult was your workout?
           </Text>
 
-          {(["easy", "moderate", "hard", "maximum"] as const).map((effort) => (
-            <Pressable
-              key={effort}
-              onPress={() => setWorkoutEffort(effort)}
-              style={[
-                styles.effortOption,
-                {
-                  borderColor:
-                    workoutEffort === effort
-                      ? t.colors.primary
-                      : t.colors.border,
-                },
-              ]}
-            >
-              <Text style={{ color: t.colors.text }}>
-                {effort === "easy"
-                  ? "Easy"
-                  : effort === "moderate"
-                    ? "Moderate"
-                    : effort === "hard"
-                      ? "Hard"
-                      : "Maximum effort"}
-              </Text>
+          <View>
+            <View style={styles.effortRow}>
+              {([1, 2, 3, 4, 5, 6, 7] as const).map((effort) => {
+                const selected = workoutEffort === effort;
+                const effortColor = effortColors[effort];
+                return (
+                  <Pressable
+                    key={effort}
+                    onPress={() => setWorkoutEffort(effort)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${effort}: ${effortLabels[effort]}`}
+                    accessibilityState={{ selected }}
+                    style={[
+                      styles.effortOption,
+                      {
+                        backgroundColor: selected
+                          ? effortColor
+                          : t.colors.surface,
+                        borderColor: selected
+                          ? effortColor
+                          : t.colors.border,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        color: selected ? t.colors.onPrimary : t.colors.text,
+                        fontWeight: "600",
+                      }}
+                    >
+                      {effort}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
 
-              {workoutEffort === effort && (
-                <Ionicons
-                  name="checkmark-circle"
-                  size={20}
-                  color={t.colors.primary}
-                />
-              )}
-            </Pressable>
-          ))}
+            <Text style={[styles.effortLabel, { color: t.colors.textMuted }]}>
+              {workoutEffort === null
+                ? "No rating selected"
+                : `${workoutEffort} · ${effortLabels[workoutEffort]}`}
+            </Text>
+          </View>
 
           <Text style={{ color: t.colors.textMuted }}>
             Workout notes (optional)
@@ -111,10 +140,7 @@ export function WorkoutCompletionModal({
           />
 
           <View style={styles.modalActions}>
-            <Pressable
-              onPress={onSkip}
-              style={styles.modalAction}
-            >
+            <Pressable onPress={onSkip} style={styles.modalAction}>
               <Text style={{ color: t.colors.textMuted }}>Cancel</Text>
             </Pressable>
 
@@ -155,13 +181,23 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  effortOption: {
+  effortRow: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    gap: 4,
+  },
+
+  effortOption: {
+    flex: 1,
+    minHeight: 44,
     alignItems: "center",
+    justifyContent: "center",
     borderWidth: 1,
-    borderRadius: 10,
-    padding: 14,
+    borderRadius: 8,
+  },
+
+  effortLabel: {
+    marginTop: 8,
+    textAlign: "center",
   },
 
   modalNotesInput: {

@@ -11,7 +11,10 @@ import { useTheme } from "@/src/theme/ThemeProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
+import {
+  useWorkoutSessionStore,
+  selectActiveSession,
+} from "@/src/store/workoutSessionStore";
 import { exercises } from "@/src/mocks/exercises.mock";
 import { ExerciseOptionsModal } from "@/src/features/workout/components/ExerciseOptionsModal";
 import { ExerciseConfigModal } from "@/src/features/workout/components/ExerciseConfigModal";
@@ -26,8 +29,13 @@ export default function FreestyleWorkoutScreen() {
     null,
   );
 
-  const activeSession = useWorkoutSessionStore((state) => state.activeSession);
+  const activeSession = useWorkoutSessionStore(selectActiveSession);
   const updateNotes = useWorkoutSessionStore((state) => state.updateNotes);
+
+  const completeWorkout = useWorkoutSessionStore(
+    (state) => state.completeWorkout,
+  );
+
   const notes = activeSession?.notes ?? "";
 
   const workoutExercises = activeSession?.exercises ?? [];
@@ -155,11 +163,11 @@ export default function FreestyleWorkoutScreen() {
     ensureExerciseSets(editingExerciseId);
 
     // Temporary debugging
-    const updatedExercise = useWorkoutSessionStore
-      .getState()
-      .activeSession?.exercises.find(
-        (exercise) => exercise.id === editingExerciseId,
-      );
+    const updatedExercise = selectActiveSession(
+      useWorkoutSessionStore.getState(),
+    )?.exercises.find(
+      (exercise) => exercise.id === editingExerciseId,
+    );
 
     console.log("Generated sets:", updatedExercise?.sets);
     console.log("Number of sets:", updatedExercise?.sets.length);
@@ -266,6 +274,7 @@ export default function FreestyleWorkoutScreen() {
       )}
 
       <WorkoutCompletionModal
+        key={activeSession?.id ?? "no-session"}
         visible={completionVisible}
         notes={notes}
         onNotesChange={updateNotes}
@@ -275,12 +284,13 @@ export default function FreestyleWorkoutScreen() {
           setCompletionVisible(false);
         }}
         onSave={(effort) => {
-          console.log("Workout feedback:", {
-            effort,
-            notes,
-          });
+          if (!activeSession || activeSession.exercises.length === 0) {
+            return;
+          }
 
+          completeWorkout(effort);
           setCompletionVisible(false);
+          router.replace("/(tabs)");
         }}
       />
 

@@ -12,7 +12,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { exercises } from "@/src/mocks/exercises.mock";
 import { useState } from "react";
-import { useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
+import { selectActiveSession, useWorkoutSessionStore } from "@/src/store/workoutSessionStore";
 
 type WeightInputProps = {
   value: number | null;
@@ -75,7 +75,7 @@ export default function ExerciseScreen() {
   const exercise = exercises.find((item) => item.id === exerciseId);
 
   const workoutExercise = useWorkoutSessionStore((state) =>
-    state.activeSession?.exercises.find(
+    selectActiveSession(state)?.exercises.find(
       (item) => item.id === workoutExerciseId,
     ),
   );
